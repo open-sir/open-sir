@@ -65,10 +65,11 @@ def sirx(w, t, p):
 
 
 def _solve(func, p, w0, secs, numpoints):
-    t = [secs * float(i) / (numpoints - 1) for i in range(numpoints)]
+    t = np.array([secs * float(i) / (numpoints - 1) for i in range(numpoints)])
 
     # Call the ODE solver.
-    return odeint(func, w0, t, args=(p,), atol=ABSERR, rtol=RELERR)
+    sol = odeint(func, w0, t, args=(p,), atol=ABSERR, rtol=RELERR)
+    return np.insert(sol, 0, t, axis=1)
 
 
 def solve_sir(p, w0, secs=SECS, numpoints=NUMPOINTS):
