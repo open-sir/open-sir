@@ -15,6 +15,7 @@ def sirx(w, t, p):
     S: Fraction of the population susceptible to the infection
     I: Fraction on the population infected
     R: Fraction of the population that recovered
+    X: Fraction of the population that is quarantined
     
     returns:
     f: right hand side of the system of differential equations
@@ -25,8 +26,9 @@ def sirx(w, t, p):
     alpha, beta, kappa_0, kappa = p
     dS_dt = -alpha*S*I - kappa_0*S
     dI_dt =  alpha*S*I - beta*I - kappa_0*I - kappa*I
-    dR_dt = (kappa_0 + kappa) * I
-    dX_dt = kappa_0*S + beta * I
+    dR_dt = kappa_0*S + beta * I
+    dX_dt = (kappa_0 + kappa) * I
+    
     
     f = [dS_dt, dI_dt, dR_dt, dX_dt]
     return f
