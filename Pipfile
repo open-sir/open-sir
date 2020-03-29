@@ -8,6 +8,10 @@ pylint = "*"
 black = "==19.10b0"
 
 [packages]
+numpy = "*"
+matplotlib = "*"
+scipy = "*"
+jupyter = "*"
 
 [requires]
 python_version = "3.7"
