@@ -12,7 +12,7 @@ S0 = (P_Ealing-I_Ealing)/P_Ealing
 I0 = I_Ealing/P_Ealing
 R0 = 0   # Recovered people
 X0 = 0      # Quarantined people
-wsol = solve_sirx(alpha, beta, kappa_0, kappa, S0, I0, R0, X0)
+wsol = solve_sirx([alpha, beta, kappa_0, kappa], [S0, I0, R0, X0])
 # Unpack the solution
 S = wsol[:,0]
 I = wsol[:,1]
