@@ -64,15 +64,13 @@ def sirx(w, t, p):
     return f
 
 
-def _solve(func, p, w0, secs, numpoints):
-    t = np.array([secs * float(i) / (numpoints - 1) for i in range(numpoints)])
-
+def _solve(func, p, w0, t, numpoints):
     # Call the ODE solver.
     sol = odeint(func, w0, t, args=(p,), atol=ABSERR, rtol=RELERR)
     return np.insert(sol, 0, t, axis=1)
 
 
-def solve_sir(p, w0, secs=SECS, numpoints=NUMPOINTS):
+def solve_sir(p, w0, t=SECS, numpoints=NUMPOINTS):
     """ Solve the SIR system for given parameters and initial conditions.
 
     inputs:
@@ -81,10 +79,10 @@ def solve_sir(p, w0, secs=SECS, numpoints=NUMPOINTS):
     secs: number of seconds to simulate
     numpoints: number of points.
     """
-    return _solve(sir, p, w0, secs, numpoints)
+    return _solve(sir, p, w0, t, numpoints)
 
 
-def solve_sirx(p, w0, secs=SECS, numpoints=NUMPOINTS):
+def solve_sirx(p, w0, t=SECS, numpoints=NUMPOINTS):
     """ Solve the SIR-X system for given parameters and initial conditions.
 
     inputs:
@@ -93,4 +91,4 @@ def solve_sirx(p, w0, secs=SECS, numpoints=NUMPOINTS):
     secs: number of seconds to simulate
     numpoints: number of points.
     """
-    return _solve(sirx, p, w0, secs, numpoints)
+    return _solve(sirx, p, w0, t, numpoints)
