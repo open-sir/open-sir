@@ -1,3 +1,5 @@
+# pylint: disable=C0103
+""" Open-SIR CLI implementation """
 import argparse
 import ast
 import sys
@@ -12,6 +14,7 @@ FIRST_ROW = [
         ["Seconds", "S", "I", "R", "X"]]
 
 def run_cli():
+    """ This function runs the main CLI routine """
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', '--model', default="sir", choices=["sir", "sirx"])
     parser.add_argument('-p', '--parameters', required=True)
@@ -26,10 +29,10 @@ def run_cli():
     model = MODEL_SIR if args.model == "sir" else MODEL_SIRX
     kwargs = {}
 
-    if (args.time):
+    if args.time:
         kwargs["tf_days"] = args.time
 
-    if (model == MODEL_SIR):
+    if model == MODEL_SIR:
         cls = SIR
     else:
         cls = SIRX
@@ -38,9 +41,8 @@ def run_cli():
     out = cls(p, w0).solve(**kwargs)
 
     # Multiply by the population
-    out[:,1:] *= pop
+    out[:, 1:] *= pop
 
-    # TODO: Improve this
     print(",".join(FIRST_ROW[model]))
     np.savetxt(sys.stdout, out, delimiter=",")
 
