@@ -66,6 +66,14 @@ def sirx(w, t, p):
 
 def _solve(func, p, w0, t, numpoints):
     # Call the ODE solver.
+    """
+    
+    The integrating routine *odeint* requires for parameters that were previously defined:
+    * func: function to be integrated.
+    * y0: vector of initial conditions of the state variables.
+    * t: discrete time-steps where the solution is going to be evaluated.
+    * args = (): Extra arguments to pass to function. In our case, is the vector of parameters **p**
+    """
     sol = odeint(func, w0, t, args=(p,), atol=ABSERR, rtol=RELERR)
     return np.insert(sol, 0, t, axis=1)
 
