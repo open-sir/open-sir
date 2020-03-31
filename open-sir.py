@@ -27,7 +27,7 @@ def run_cli():
     kwargs = {}
 
     if (args.time):
-        kwargs["tf_secs"] = args.time
+        kwargs["tf_days"] = args.time
 
     if (model == MODEL_SIR):
         cls = SIR
@@ -35,7 +35,7 @@ def run_cli():
         cls = SIRX
 
     # Call the desired solver
-    out = cls(p, w0).solve(args.time, 250)
+    out = cls(p, w0).solve(**kwargs)
 
     # Multiply by the population
     out[:,1:] *= pop
