@@ -1,8 +1,10 @@
+# pylint: disable=C0103
+""" Open-SIR CLI implementation """
 import argparse
 import ast
 import sys
 import numpy as np
-from model import solve_sirx, solve_sir
+from model import SIR, SIRX
 
 MODEL_SIR = 0
 MODEL_SIRX = 1
@@ -12,6 +14,7 @@ FIRST_ROW = [
         ["Seconds", "S", "I", "R", "X"]]
 
 def run_cli():
+    """ This function runs the main CLI routine """
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', '--model', default="sir", choices=["sir", "sirx"])
     parser.add_argument('-p', '--parameters', required=True)
@@ -19,28 +22,27 @@ def run_cli():
     parser.add_argument('-t', '--time', type=int)
 
     args = parser.parse_args()
-    p = ast.literal_eval(args.parameters)
+    p = np.array(ast.literal_eval(args.parameters))
     w = np.array(ast.literal_eval(args.initial_conds))
     pop = np.sum(w)
     w0 = w/pop
     model = MODEL_SIR if args.model == "sir" else MODEL_SIRX
     kwargs = {}
 
-    if (args.time):
-        kwargs["secs"] = args.time
+    if args.time:
+        kwargs["tf_days"] = args.time
 
-    if (model == MODEL_SIR):
-        func = solve_sir
+    if model == MODEL_SIR:
+        cls = SIR
     else:
-        func = solve_sirx
+        cls = SIRX
 
     # Call the desired solver
-    out = func(p, w0, **kwargs)
+    out = cls(p, w0).solve(**kwargs)
 
     # Multiply by the population
-    out[:,1:] *= pop
+    out[:, 1:] *= pop
 
-    # TODO: Improve this
     print(",".join(FIRST_ROW[model]))
     np.savetxt(sys.stdout, out, delimiter=",")
 
