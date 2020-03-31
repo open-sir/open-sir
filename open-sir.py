@@ -2,7 +2,7 @@ import argparse
 import ast
 import sys
 import numpy as np
-from model import solve_sirx, solve_sir
+from model import SIR, SIRX
 
 MODEL_SIR = 0
 MODEL_SIRX = 1
@@ -27,15 +27,15 @@ def run_cli():
     kwargs = {}
 
     if (args.time):
-        kwargs["secs"] = args.time
+        kwargs["tf_secs"] = args.time
 
     if (model == MODEL_SIR):
-        func = solve_sir
+        cls = SIR
     else:
-        func = solve_sirx
+        cls = SIRX
 
     # Call the desired solver
-    out = func(p, w0, **kwargs)
+    out = cls(p, w0).solve(args.time, 250)
 
     # Multiply by the population
     out[:,1:] *= pop
