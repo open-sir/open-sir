@@ -86,7 +86,7 @@ class Model:
         self.p = p
         self.w0 = w0
 
-    def solve(self, tf_days, numpoints):
+    def solve(self, tf_days=DAYS, numpoints=NUMPOINTS):
         tspan = np.linspace(0, tf_days, numpoints)
 
         a = call_solver(self.func, self.p, self.w0,
