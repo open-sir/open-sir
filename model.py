@@ -3,7 +3,7 @@ from scipy.integrate import odeint # ODE system numerical integrator
 
 ABSERR = 1.0e-8
 RELERR = 1.0e-6
-SECS=7*3600*24
+DAYS=7
 NUMPOINTS=250
 
 def call_solver(func, p, w0, t, numpoints):
@@ -86,8 +86,8 @@ class Model:
         self.p = p
         self.w0 = w0
 
-    def solve(self, tf_secs, numpoints):
-        tspan = np.linspace(0,tf_secs,numpoints)
+    def solve(self, tf_days, numpoints):
+        tspan = np.linspace(0, tf_days, numpoints)
 
         a = call_solver(self.func, self.p, self.w0,
                      tspan, numpoints)
@@ -111,7 +111,7 @@ class Model:
         Returns
         """
 
-        secs_obs = t_obs*3600*24
+        days_obs = t_obs
 
         def function_handle(t, alpha, beta = self.p[1], population=population):
             p = [alpha,beta]
@@ -122,7 +122,7 @@ class Model:
 
         # Fit alpha
         alpha_opt, pcov = curve_fit(f = function_handle,
-                        xdata = secs_obs, ydata = n_I_obs, p0=self.p[0])
+                        xdata = days_obs, ydata = n_I_obs, p0=self.p[0])
         p_new = [i for i in self.p]
         p_new[0] = alpha_opt[0]
         self.p=p_new

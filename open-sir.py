@@ -19,7 +19,7 @@ def run_cli():
     parser.add_argument('-t', '--time', type=int)
 
     args = parser.parse_args()
-    p = ast.literal_eval(args.parameters)
+    p = np.array(ast.literal_eval(args.parameters))
     w = np.array(ast.literal_eval(args.initial_conds))
     pop = np.sum(w)
     w0 = w/pop
