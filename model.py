@@ -6,7 +6,7 @@ from scipy.optimize import curve_fit
 ABSERR = 1.0e-8
 RELERR = 1.0e-6
 DAYS = 7
-NUMPOINTS = 250
+NUMPOINTS = DAYS
 
 def call_solver(func, p, w0, t):
     """
@@ -82,23 +82,55 @@ def sirx(w, t, p):
 
 class Model:
     """ Base model definition """
+    CSV_ROW = []
 
-    def __init__(self, p, w0):
+    def __init__(self, p, w0, pop):
         self.func = None
         self._setmodel()
         self.p = p
         self.w0 = w0
+        self.sol = None
+        self.pop = pop
+        print(self.__class__.CSV_ROW)
+
+    def export(self, f, delimiter=","):
+        """ Export the output of the model in CSV format
+        Calling this before solve() raises an exception.
+
+        input:
+        f: file name or descriptor
+        delimiter: delimiter of the CSV file
+        """
+        if self.sol is None:
+            raise Exception("Missing call to solve()")
+
+        np.savetxt(f, self.sol, header=",".join(self.__class__.CSV_ROW),
+                   delimiter=",")
+
+    def fetch(self):
+        """ Fetch the data from the model.
+        The first row is the time in days
+        """
+        return self.sol
 
     def solve(self, tf_days=DAYS, numpoints=NUMPOINTS):
         """ Solve using children class model.
         input:
         tf_days: number of days to simulate
         numpoints: number of points for the simulation.
+
+        output:
+        Reference to self
         """
         tspan = np.linspace(0, tf_days, numpoints)
 
-        return call_solver(self.func, self.p, self.w0,
-                           tspan)
+        sol = call_solver(self.func, self.p, self.w0,
+                          tspan)
+        # Multiply by the population
+        sol[:, 1:] *= self.pop
+
+        self.sol = sol
+        return self
 
     # pylint: disable=R0201
     def _setmodel(self):
@@ -131,7 +163,7 @@ class Model:
 
         # Fit alpha
         alpha_opt = curve_fit(f=function_handle,
-                                    xdata=days_obs, ydata=n_i_obs, p0=self.p[0])
+                              xdata=days_obs, ydata=n_i_obs, p0=self.p[0])
         p_new = np.array(self.p)
         p_new[0] = alpha_opt[0]
         self.p = p_new
@@ -139,10 +171,12 @@ class Model:
 
 class SIR(Model):
     """ SIR model definition """
+    CSV_ROW = ["Days", "S", "I", "R"]
     def _setmodel(self):
         self.func = sir
 
 class SIRX(Model):
     """ SIRX model definition """
+    CSV_ROW = ["Days", "S", "I", "R", "X"]
     def _setmodel(self):
         self.func = sirx
