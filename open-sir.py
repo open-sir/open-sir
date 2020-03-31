@@ -1,25 +1,48 @@
-from model import solve_sirx
+import argparse
+import ast
+import sys
 import numpy as np
-import matplotlib.pyplot as plt # Visualization
+from model import solve_sirx, solve_sir
 
-beta = 0.38/(3600*24) # Per day
-alpha = 2.5 * beta # Reproduction number
-kappa_0 = 0 # Simple SIR to begin 
-kappa = 0   # Simple SIR to begin
-P_Ealing = 200000 # Ealing population
-I_Ealing = 200    # Infected people at 28/03/2020
-S0 = (P_Ealing-I_Ealing)/P_Ealing
-I0 = I_Ealing/P_Ealing
-R0 = 0   # Recovered people
-X0 = 0      # Quarantined people
-wsol = solve_sirx([alpha, beta, kappa_0, kappa], [S0, I0, R0, X0])
-# Unpack the solution
-S = wsol[:,0]
-I = wsol[:,1]
-R = wsol[:,2]
-X = wsol[:,3]
-tt = np.linspace(0,7,len(S))
-plt.plot(tt,S*P_Ealing)
-plt.ylabel("Healthy people")
-plt.xlabel("Time / d")
-plt.show()
+MODEL_SIR = 0
+MODEL_SIRX = 1
+
+FIRST_ROW = [
+        ["Seconds", "S", "I", "R"],
+        ["Seconds", "S", "I", "R", "X"]]
+
+def run_cli():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-m', '--model', default="sir", choices=["sir", "sirx"])
+    parser.add_argument('-p', '--parameters', required=True)
+    parser.add_argument('-i', '--initial-conds', required=True)
+    parser.add_argument('-t', '--time', type=int)
+
+    args = parser.parse_args()
+    p = ast.literal_eval(args.parameters)
+    w = np.array(ast.literal_eval(args.initial_conds))
+    pop = np.sum(w)
+    w0 = w/pop
+    model = MODEL_SIR if args.model == "sir" else MODEL_SIRX
+    kwargs = {}
+
+    if (args.time):
+        kwargs["secs"] = args.time
+
+    if (model == MODEL_SIR):
+        func = solve_sir
+    else:
+        func = solve_sirx
+
+    # Call the desired solver
+    out = func(p, w0, **kwargs)
+
+    # Multiply by the population
+    out[:,1:] *= pop
+
+    # TODO: Improve this
+    print(",".join(FIRST_ROW[model]))
+    np.savetxt(sys.stdout, out, delimiter=",")
+
+if __name__ == "__main__":
+    run_cli()
