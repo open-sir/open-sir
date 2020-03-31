@@ -1,12 +1,14 @@
+""" Model implementation """
 import numpy as np # Numerical computing
 from scipy.integrate import odeint # ODE system numerical integrator
+from scipy.optimize import curve_fit
 
 ABSERR = 1.0e-8
 RELERR = 1.0e-6
-DAYS=7
-NUMPOINTS=250
+DAYS = 7
+NUMPOINTS = 250
 
-def call_solver(func, p, w0, t, numpoints):
+def call_solver(func, p, w0, t):
     """
     Internal function to wrap the solver.
     The integrating routine *odeint* requires for parameters that were previously defined:
@@ -21,120 +23,126 @@ def call_solver(func, p, w0, t, numpoints):
     return np.insert(sol, 0, t, axis=1)
 
 
+# pylint: disable=W0613
 def sir(w, t, p):
     """ SIR: Simple model of disease spread
     inputs:
     w: vector of state variables [S,I,R]
-    where 
+    where
         S: Fraction of the population susceptible to the infection
         I: Fraction on the population infected
         R: Fraction of the population recovered
     t: Current time
-    p: vector of parameters
-    
+    p: vector of parameter
+
     returns:
-    f: right hand side of the system of differential equations
+    f: right hand side of the system of differential equation
     """
-    # Unpack state variables
-    S, I, R = w
-    # Unpack parameters
+    # unpack state variable
+    s, i, r = w   # pylint: disable=W0612
+    # unpack parameter
     alpha, beta = p
-    dS_dt = -alpha*S*I
-    dI_dt =  alpha*S*I - beta*I
-    dR_dt = beta * I
-    
-    f = [dS_dt, dI_dt, dR_dt]
-    return f
+    ds_dt = -alpha*s*i
+    di_dt = alpha*s*i - beta*i
+    dr_dt = beta * i
+
+    return [ds_dt, di_dt, dr_dt]
 
 
 def sirx(w, t, p):
     """ SIR-X: Dynamic outbreaks with temporally increasing
-    interventions
+    intervention
 
     inputs:
     w: vector of state variables [S,I,R,X]
-    where 
+    where
         S: Fraction of the population susceptible to the infection
         I: Fraction on the population infected
         R: Fraction of the population that recovered
         X: Fraction of the population that is quarantined
 
     t: time
-    p: vector of parameters
+    p: vector of parameter
 
     returns:
-    f: right hand side of the system of differential equations
+    right hand side of the system of differential equation
     """
-    # Unpack state variables
-    S, I, R, X = w
-    # Unpack parameters
+    # unpack state variable
+    s, i, r, x = w   # pylint: disable=W0612
+    # unpack parameter
     alpha, beta, kappa_0, kappa = p
-    dS_dt = -alpha*S*I - kappa_0*S
-    dI_dt =  alpha*S*I - beta*I - kappa_0*I - kappa*I
-    dR_dt = kappa_0*S + beta * I
-    dX_dt = (kappa_0 + kappa) * I
+    ds_dt = -alpha*s*i - kappa_0*s
+    di_dt = alpha*s*i - beta*i - kappa_0*i - kappa*i
+    dr_dt = kappa_0*s + beta * i
+    dx_dt = (kappa_0 + kappa) * i
 
 
-    f = [dS_dt, dI_dt, dR_dt, dX_dt]
-    return f
+    return [ds_dt, di_dt, dr_dt, dx_dt]
 
 
 class Model:
-    
+    """ Base model definition """
+
     def __init__(self, p, w0):
-        self.setmodel()
+        self.func = None
+        self._setmodel()
         self.p = p
         self.w0 = w0
 
     def solve(self, tf_days=DAYS, numpoints=NUMPOINTS):
+        """ Solve using children class model.
+        input:
+        tf_days: number of days to simulate
+        numpoints: number of points for the simulation.
+        """
         tspan = np.linspace(0, tf_days, numpoints)
 
-        a = call_solver(self.func, self.p, self.w0,
-                     tspan, numpoints)
-        return a
+        return call_solver(self.func, self.p, self.w0,
+                           tspan)
+
+    # pylint: disable=R0201
+    def _setmodel(self):
+        raise Exception("Parent class cannot be initialized")
 
     @property
-    def R_0(self):
+    def r0(self):
         """ Returns reproduction number
-        R_0 = alpha/beta"""
+        r0 = alpha/beta"""
         return self.p[0]/self.p[1]
 
-    def fit(self, t_obs, n_I_obs, population, inplace=False):
+    def fit(self, t_obs, n_i_obs, population, inplace=False):
         """ Use the Levenberg-Marquardt algorithm to fit
         the parameter alpha, as beta is assumed constant
 
         inputs:
         t_obs: Vector of days corresponding to the observations of number of infected people
-        n_I_obs: Vector of number of infected people
+        n_i_obs: Vector of number of infected people
         population: Size of the objective population
 
-        Returns
+        Return
         """
 
         days_obs = t_obs
 
-        def function_handle(t, alpha, beta = self.p[1], population=population):
-            p = [alpha,beta]
-            I_mod = call_solver(self.func, p, self.w0,
-                           t, numpoints=len(t_obs))
-            n_I_mod = I_mod[:,2]*population
-            return n_I_mod
+        def function_handle(t, alpha, beta=self.p[1], population=population):
+            p = [alpha, beta]
+            i_mod = call_solver(self.func, p, self.w0, t)
+            return i_mod[:, 2] * population
 
         # Fit alpha
-        alpha_opt, pcov = curve_fit(f = function_handle,
-                        xdata = days_obs, ydata = n_I_obs, p0=self.p[0])
-        p_new = [i for i in self.p]
+        alpha_opt = curve_fit(f=function_handle,
+                                    xdata=days_obs, ydata=n_i_obs, p0=self.p[0])
+        p_new = np.array(self.p)
         p_new[0] = alpha_opt[0]
-        self.p=p_new
-        return
+        self.p = p_new
         # return p_new, pcov
 
-    pass
-
 class SIR(Model):
-    def setmodel(self):
+    """ SIR model definition """
+    def _setmodel(self):
         self.func = sir
 
 class SIRX(Model):
-    def setmodel(self):
+    """ SIRX model definition """
+    def _setmodel(self):
         self.func = sirx
