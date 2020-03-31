@@ -9,10 +9,6 @@ from model import SIR, SIRX
 MODEL_SIR = 0
 MODEL_SIRX = 1
 
-FIRST_ROW = [
-        ["Seconds", "S", "I", "R"],
-        ["Seconds", "S", "I", "R", "X"]]
-
 def run_cli():
     """ This function runs the main CLI routine """
     parser = argparse.ArgumentParser()
@@ -33,18 +29,11 @@ def run_cli():
         kwargs["tf_days"] = args.time
 
     if model == MODEL_SIR:
-        cls = SIR
+        sol = SIR(p, w0, pop)
     else:
-        cls = SIRX
+        sol = SIRX(p, w0, pop)
 
-    # Call the desired solver
-    out = cls(p, w0).solve(**kwargs)
-
-    # Multiply by the population
-    out[:, 1:] *= pop
-
-    print(",".join(FIRST_ROW[model]))
-    np.savetxt(sys.stdout, out, delimiter=",")
+    sol.solve(**kwargs).export(sys.stdout)
 
 if __name__ == "__main__":
     run_cli()
