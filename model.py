@@ -97,9 +97,10 @@ class Model:
     def _set_params(self, p, initial_conds):
         """ Set model parameters.
         input:
-        p: parameters of the model. The parameters are in day units (e.g
-           alpha = real_alpha*24*3600)
-        initial_conds: Initial conditions
+        p: parameters of the model. The parameters units are 1/day.
+        initial_conds: Initial conditions, in total number of individuals.
+        For instance, S0 = n_S0/population, where n_S0 is the number of subjects
+        who are susceptible to the disease.
         """
 
         num_params = self.__class__.NUM_PARAMS
