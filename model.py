@@ -83,15 +83,35 @@ def sirx(w, t, p):
 class Model:
     """ Base model definition """
     CSV_ROW = []
+    NUM_PARAMS = 4
+    NUM_IC = 4
 
-    def __init__(self, p, w0, pop):
+    def __init__(self):
         self.func = None
-        self._setmodel()
-        self.p = p
-        self.w0 = w0
         self.sol = None
-        self.pop = pop
-        print(self.__class__.CSV_ROW)
+        self.p = None
+        self.pop = None
+        self.w0 = None
+        self._setmodel()
+
+    def _set_params(self, p, initial_conds):
+        """ Set model parameters.
+        input:
+        p: parameters of the model. The parameters are in day units (e.g
+           alpha = real_alpha*24*3600)
+        initial_conds: Initial conditions
+        """
+
+        num_params = self.__class__.NUM_PARAMS
+        num_ic = self.__class__.NUM_IC
+
+        if len(p) != num_params or len(initial_conds) != num_ic:
+            raise Exception("Invalid number of parameters \
+                             or initial conditions")
+        self.p = p
+        self.pop = np.sum(initial_conds)
+        self.w0 = initial_conds/self.pop
+        return self
 
     def export(self, f, delimiter=","):
         """ Export the output of the model in CSV format
@@ -172,11 +192,50 @@ class Model:
 class SIR(Model):
     """ SIR model definition """
     CSV_ROW = ["Days", "S", "I", "R"]
+    NUM_PARAMS = 2
+    NUM_IC = 3
+
     def _setmodel(self):
         self.func = sir
+
+    def set_params(self, p, initial_conds):
+        """ Set model parameters.
+        input:
+        p: parameters of the model [alpha, beta]. All these
+           values should be in day units (e.g alpha*3600*24).
+        initial_conds: Initial conditions (S0, I0, R0), where:
+          S0: Total number of susceptible to the infection
+          I0: Toral number of infected
+          R0: Total number of recovered
+          Note S0 + I0 + R0 = Population
+        output:
+        reference to self
+        """
+        self._set_params(p, initial_conds)
+        return self
 
 class SIRX(Model):
     """ SIRX model definition """
     CSV_ROW = ["Days", "S", "I", "R", "X"]
+    NUM_PARAMS = 4
+    NUM_IC = 4
+
     def _setmodel(self):
         self.func = sirx
+
+    def set_params(self, p, initial_conds):
+        """ Set model parameters.
+        input:
+        p: parameters of the model [alpha, beta, kappa_0, kappa]. All this
+           values should be in day units (e.g alpha*3600*24).
+        initial_conds: Initial conditions (S0, I0, R0, X0), where:
+          S0: Total number of susceptible to the infection
+          I0: Toral number of infected
+          R0: Total number of recovered
+          X0: Total number of quarantined
+          Note S0 + I0 + R0 + X0 = Population
+        output:
+        reference to self
+        """
+        self._set_params(p, initial_conds)
+        return self
