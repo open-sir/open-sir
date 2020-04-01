@@ -9,6 +9,7 @@ def ci_bootstrap(model, t_obs, n_I_obs, population, alpha=0.95, n_iter=1000, r0_
     using the bootstrap method
     
     inputs:
+    
     model: a open-sir model instance
     t_obs: list or np.array  of days where the number of infected
     where measured
@@ -16,8 +17,12 @@ def ci_bootstrap(model, t_obs, n_I_obs, population, alpha=0.95, n_iter=1000, r0_
     population: population size
     alpha: percentile of the CI required
 
-    output: list of lists with values of predictions and
-    parameters
+    outputs: 
+
+    ci: list with lower and upper confidence intervals of the parameters
+    p_bt: list of the parameters sampled on the bootstrapping. The most
+    common use of this list is to plot histograms to visualize and
+    try to infer the probability density function of the parameters.
 
     disclaimer:
     This traditional bootstrap is not a good way to bootstrap 
@@ -43,6 +48,12 @@ def ci_bootstrap(model, t_obs, n_I_obs, population, alpha=0.95, n_iter=1000, r0_
         t_rs = t_r[idx]
         I_rs = I_r[idx]
         # Fit the model to the sampled data
+        # Update model initial conditions
+        I0_rs = I_rs[0]/population
+        S0_rs = (population-I0_rs)/population
+        R0_rs = 0 # We will still assume that we don't have observations of recovered
+
+        model.w0 = [S0_rs, I0_rs, R0_rs]
         model.fit(t_rs, I_rs, population)
         p_bt.append(model.p)
         if r0_ci:
@@ -72,4 +83,4 @@ def ci_bootstrap(model, t_obs, n_I_obs, population, alpha=0.95, n_iter=1000, r0_
     model.p = p0 
     model.w0 = w0
 
-    return ci
+    return ci, p_bt
