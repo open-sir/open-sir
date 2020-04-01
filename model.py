@@ -84,13 +84,22 @@ class Model:
     """ Base model definition """
     CSV_ROW = []
 
-    def __init__(self, p, w0, pop):
+    def __init__(self):
         self.func = None
-        self._setmodel()
-        self.p = p
-        self.w0 = w0
         self.sol = None
-        self.pop = pop
+        self._setmodel()
+
+    def set_params(self, p, initial_conds):
+        """ Set model parameters.
+        input:
+        p: parameters of the model. The parameters are in day units (e.g
+           alpha = real_alpha*24*3600)
+        initial_conds: Initial conditions (in number of people)
+        """
+        self.p = p
+        self.pop = np.sum(initial_conds)
+        self.w0 = initial_conds/self.pop
+        return self
 
     def export(self, f, delimiter=","):
         """ Export the output of the model in CSV format
