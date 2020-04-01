@@ -61,7 +61,6 @@ def ci_bootstrap(
         p_bt.append(model.p)
         if r0_ci:
             r0_bt.append(model.r0)
-
     # Calculate percentiles value
     p_low = ((1 - alpha) / 2) * 100
     p_up = (alpha + (1 - alpha) / 2) * 100
@@ -139,7 +138,6 @@ def ci_block_cv(
     MSE_list = np.array(MSE_list)
     MSE_avg = np.mean(MSE_list)
 
-    model.p = p0
     model.w = w0
 
     return MSE_avg, MSE_list, p_list
