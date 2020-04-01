@@ -85,14 +85,13 @@ class Model:
     CSV_ROW = []
     NUM_PARAMS = 4
     NUM_IC = 4
+    FUNC = None
 
     def __init__(self):
-        self.func = None
         self.sol = None
         self.p = None
         self.pop = None
         self.w0 = None
-        self._setmodel()
 
     def _set_params(self, p, initial_conds):
         """ Set model parameters.
@@ -144,17 +143,13 @@ class Model:
         """
         tspan = np.linspace(0, tf_days, numpoints)
 
-        sol = call_solver(self.func, self.p, self.w0,
+        sol = call_solver(self.__class__.FUNC, self.p, self.w0,
                           tspan)
         # Multiply by the population
         sol[:, 1:] *= self.pop
 
         self.sol = sol
         return self
-
-    # pylint: disable=R0201
-    def _setmodel(self):
-        raise Exception("Parent class cannot be initialized")
 
     @property
     def r0(self):
@@ -178,7 +173,7 @@ class Model:
 
         def function_handle(t, alpha, beta=self.p[1], population=population):
             p = [alpha, beta]
-            i_mod = call_solver(self.func, p, self.w0, t)
+            i_mod = call_solver(self.__class__.FUNC, p, self.w0, t)
             return i_mod[:, 2] * population
 
         # Fit alpha
@@ -194,9 +189,7 @@ class SIR(Model):
     CSV_ROW = ["Days", "S", "I", "R"]
     NUM_PARAMS = 2
     NUM_IC = 3
-
-    def _setmodel(self):
-        self.func = sir
+    FUNC = sir
 
     def set_params(self, p, initial_conds):
         """ Set model parameters.
@@ -219,9 +212,7 @@ class SIRX(Model):
     CSV_ROW = ["Days", "S", "I", "R", "X"]
     NUM_PARAMS = 4
     NUM_IC = 4
-
-    def _setmodel(self):
-        self.func = sirx
+    FUNC = sirx
 
     def set_params(self, p, initial_conds):
         """ Set model parameters.
