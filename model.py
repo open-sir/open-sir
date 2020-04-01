@@ -92,6 +92,7 @@ class Model:
         self.p = None
         self.pop = None
         self.w0 = None
+        self.pcov = None
 
     def _set_params(self, p, initial_conds):
         """ Set model parameters.
@@ -177,12 +178,13 @@ class Model:
             return i_mod[:, 2] * population
 
         # Fit alpha
-        alpha_opt = curve_fit(f=function_handle,
+        alpha_opt, pcov = curve_fit(f=function_handle,
                               xdata=days_obs, ydata=n_i_obs, p0=self.p[0])
         p_new = np.array(self.p)
         p_new[0] = alpha_opt[0]
         self.p = p_new
-        # return p_new, pcov
+        self.pcov = pcov
+        return self
 
 class SIR(Model):
     """ SIR model definition """
