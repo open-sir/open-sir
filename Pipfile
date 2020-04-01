@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 pylint = "*"
 black = "==19.10b0"
+pytest = "*"
 
 [packages]
 numpy = "*"
@@ -22,3 +23,4 @@ allow_prereleases = true
 [scripts]
 start = "python app.py"
 lint = "pylint **/*.py"
+test = "pytest"

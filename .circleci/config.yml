@@ -1,0 +1,91 @@
+version: 2.1
+
+orbs:
+  docker: circleci/docker@1.0.1
+
+aliases:
+  - &py-docker-image circleci/python:3.7
+  - &working-directory ~/repo
+  - &py-cache-key v1-{{ checksum "Pipfile.lock" }}
+  - &py-cache-restore-keys
+    - v1-{{ checksum "Pipfile.lock" }}
+    - v1-
+
+executors:
+  py-executor:
+    working_directory: *working-directory
+    docker:
+      - image: *py-docker-image
+
+commands:
+  bootstrap:
+    description: Checkout code and restore cache
+    steps:
+      - checkout
+      - restore_cache:
+          keys: *py-cache-restore-keys
+      - run: pip install pipenv
+
+jobs:
+  bootstrap:
+    description: Install dependencies and update cache
+    executor: py-executor
+    steps:
+      - bootstrap
+      - run: pipenv install --dev
+      - save_cache:
+          key: *py-cache-key
+          paths:
+            - "venv"
+
+  lint:
+    description: Run pylint
+    executor: py-executor
+    steps:
+      - bootstrap
+      - run:
+          name: Run linter
+          command: pipenv run pylint **/*.py
+
+  test:
+    description: Run tests
+    executor: py-executor
+    steps:
+      - bootstrap
+      - run:
+          name: Run tests
+          command: pipenv run test
+
+  build:
+    description: Build Docker image
+    executor: docker/machine
+    steps:
+      - checkout
+      - docker/check
+      - docker/build:
+          image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
+
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - lint
+      - test
+      - build:
+          requires:
+            - lint
+            - test
+          filters:
+            branches:
+              ignore:
+                - master
+      - docker/publish:
+          requires:
+            - lint
+            - test
+          filters:
+            branches:
+              only: master
+          image: $DOCKER_USERNAME/$CIRCLE_PROJECT_REPONAME
+          tag: latest #TODO: version this somehow, defaults to $CIRCLE_SHA1
+          use-docker-credentials-store: true
