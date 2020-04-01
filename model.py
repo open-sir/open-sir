@@ -198,12 +198,20 @@ class SIR(Model):
         """ Set model parameters.
         input:
         p: parameters of the model [alpha, beta]. All these
-           values should be in day units (e.g alpha*3600*24).
-        initial_conds: Initial conditions (S0, I0, R0), where:
-          S0: Total number of susceptible to the infection
-          I0: Toral number of infected
-          R0: Total number of recovered
-          Note S0 + I0 + R0 = Population
+           values should be in 1/day units.
+        initial_conds: Initial conditions (n_S0, n_I0, n_R0), where:
+          n_S0: Total number of susceptible to the infection
+          n_I0: Toral number of infected
+          n_R0: Total number of recovered
+          Note n_S0 + n_I0 + n_R0 = Population
+          
+          Internally, the model initial conditions are the ratios
+          S0 = n_S0/Population
+          I0 = n_I0/Population
+          R0 = n_R0/Population
+          which is consistent with the mathematical description
+          of the SIR model.
+          
         output:
         reference to self
         """
@@ -220,14 +228,23 @@ class SIRX(Model):
     def set_params(self, p, initial_conds):
         """ Set model parameters.
         input:
-        p: parameters of the model [alpha, beta, kappa_0, kappa]. All this
-           values should be in day units (e.g alpha*3600*24).
+        p: parameters of the model [alpha, beta, kappa_0, kappa]. All these
+           values should be in 1/day units.
         initial_conds: Initial conditions (S0, I0, R0, X0), where:
-          S0: Total number of susceptible to the infection
-          I0: Toral number of infected
-          R0: Total number of recovered
-          X0: Total number of quarantined
-          Note S0 + I0 + R0 + X0 = Population
+          n_S0: Total number of susceptible to the infection
+          n_I0: Total number of infected
+          n_R0: Total number of recovered
+          n_X0: Total number of quarantined
+          Note: n_S0 + n_I0 + n_R0 + n_X0 = Population
+        
+        Internally, the model initial conditions are the ratios
+          S0 = n_S0/Population
+          I0 = n_I0/Population
+          R0 = n_R0/Population
+          X0 = n_X0/Population
+          which is consistent with the mathematical description
+          of the SIR model.
+          
         output:
         reference to self
         """
