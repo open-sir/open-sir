@@ -87,6 +87,9 @@ class Model:
     def __init__(self):
         self.func = None
         self.sol = None
+        self.p = None
+        self.pop = None
+        self.w0 = None
         self._setmodel()
 
     def set_params(self, p, initial_conds):
