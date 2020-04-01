@@ -6,7 +6,7 @@ from scipy.optimize import curve_fit
 ABSERR = 1.0e-8
 RELERR = 1.0e-6
 DAYS = 7
-NUMPOINTS = 250
+NUMPOINTS = DAYS
 
 def call_solver(func, p, w0, t):
     """
@@ -91,7 +91,6 @@ class Model:
         self.w0 = w0
         self.sol = None
         self.pop = pop
-        print(self.__class__.CSV_ROW)
 
     def export(self, f, delimiter=","):
         """ Export the output of the model in CSV format
