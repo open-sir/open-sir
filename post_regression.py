@@ -85,7 +85,7 @@ def ci_bootstrap(model, t_obs, n_I_obs, population, alpha=0.95, n_iter=1000, r0_
 
     return ci, p_bt
 
-def ci_block_cv(model, t_obs, n_I_obs, population, lag = 1, alpha=0.95, r0_ci = True):
+def ci_block_cv(model, t_obs, n_I_obs, population, lag = 1, min_sample=3, alpha=0.95, r0_ci = True):
     """ Calculates the confidence interval of the model parameters
     using a block cross validation appropriate for time series
     and differential systems when the value of the states in the
@@ -101,7 +101,11 @@ def ci_block_cv(model, t_obs, n_I_obs, population, lag = 1, alpha=0.95, r0_ci = 
     population: population size
     alpha: percentile of the CI required
 
-    outputs: 
+    outputs: #
+
+    MSE_avg:
+    MSE_list:
+    p_list:
 
     ci: list with lower and upper confidence intervals of the parameters
     p_bt: list of the parameters sampled on the bootstrapping. The most
@@ -113,18 +117,17 @@ def ci_block_cv(model, t_obs, n_I_obs, population, lag = 1, alpha=0.95, r0_ci = 
     w0 = model.w0
 
     # Consider at least the three first datapoints
-    min_sample = 3
     p_list = []
     MSE_list = [] # List of mean squared errors of the prediction for the time t+1
-    for i in range(min_sample-1, len(n_I_obs)-1):
+    for i in range(min_sample-1, len(n_I_obs)-lag):
         # Fit model to a subset of the time-series data
         model.fit(t_obs[0:i], n_I_obs[0:i], population)
         # Store the rolling parameters
         p_list.append(model.p)
         # Predict for the i+1 period
-        sol = model.solve(t_obs[i+1], numpoints = t_obs[i+1]+1)
+        sol = model.solve(t_obs[i+lag], numpoints = t_obs[i+lag]+1)
         # Calculate mean squared errors
-        MSE = np.sqrt( (sol[-1,2] - n_I_obs[i+1])**2 )
+        MSE = np.sqrt( (population*sol[i-1+lag,2] - n_I_obs[i-1+lag])**2 )
         MSE_list.append(MSE)
 
     p_list = np.array(p_list)
@@ -134,4 +137,4 @@ def ci_block_cv(model, t_obs, n_I_obs, population, lag = 1, alpha=0.95, r0_ci = 
     model.p=p0
     model.w=w0
 
-    return MSE_avg, p_list
+    return MSE_avg, MSE_list, p_list
