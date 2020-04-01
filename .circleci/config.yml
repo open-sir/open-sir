@@ -69,8 +69,13 @@ workflows:
   version: 2
   commit:
     jobs:
-      - lint
-      - test
+      - bootstrap
+      - lint:
+          requires:
+            - bootstrap
+      - test:
+          requires:
+            - bootstrap
       - build:
           requires:
             - lint
