@@ -1,32 +1,5 @@
-### PyDev ###
-*.pydevproject
-.project
-.metadata
-bin/**
-tmp/**
-tmp/**/*
-*.tmp
-*.bak
-*.swp
-*~.nib
-local.properties
-.classpath
-.settings/
-.loadpath
-
-# CDT-specific
-.cproject
-
 # Created by https://www.gitignore.io/api/python
 # Edit at https://www.gitignore.io/?templates=python
-
-### Training Data ###
-
-*.jpg
-*.png
-# do not ignore references
-!references/*.png
-*.csv*
 
 ### Python ###
 
@@ -177,12 +150,11 @@ pip-selfcheck.json
 # .nfs files are created when an open file is removed but is still being accessed
 .nfs*
 
-.*
-!.gitignore
 *.sw[a-p]
 
 # KDE
 .directory
+
 
 ### OSX ###
 
