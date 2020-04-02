@@ -146,7 +146,6 @@ class Model:
         Reference to self
         """
         tspan = np.linspace(0, tf_days, numpoints)
-
         sol = call_solver(self.__class__.FUNC, self.p, self.w0, tspan)
         # Multiply by the population
         sol[:, 1:] *= self.pop
@@ -229,6 +228,7 @@ class SIR(Model):
         """
         self._set_params(p, initial_conds)
         return self
+
 
 
 class SIRX(Model):
