@@ -1,12 +1,13 @@
 """ Model implementation """
-import numpy as np # Numerical computing
-from scipy.integrate import odeint # ODE system numerical integrator
+import numpy as np  # Numerical computing
+from scipy.integrate import odeint  # ODE system numerical integrator
 from scipy.optimize import curve_fit
 
 ABSERR = 1.0e-8
 RELERR = 1.0e-6
 DAYS = 7
 NUMPOINTS = 250
+
 
 def call_solver(func, p, w0, t):
     """
@@ -39,11 +40,11 @@ def sir(w, t, p):
     f: right hand side of the system of differential equation
     """
     # unpack state variable
-    s, i, r = w   # pylint: disable=W0612
+    s, i, r = w  # pylint: disable=W0612
     # unpack parameter
     alpha, beta = p
-    ds_dt = -alpha*s*i
-    di_dt = alpha*s*i - beta*i
+    ds_dt = -alpha * s * i
+    di_dt = alpha * s * i - beta * i
     dr_dt = beta * i
 
     return [ds_dt, di_dt, dr_dt]
@@ -68,14 +69,13 @@ def sirx(w, t, p):
     right hand side of the system of differential equation
     """
     # unpack state variable
-    s, i, r, x = w   # pylint: disable=W0612
+    s, i, r, x = w  # pylint: disable=W0612
     # unpack parameter
     alpha, beta, kappa_0, kappa = p
-    ds_dt = -alpha*s*i - kappa_0*s
-    di_dt = alpha*s*i - beta*i - kappa_0*i - kappa*i
-    dr_dt = kappa_0*s + beta * i
+    ds_dt = -alpha * s * i - kappa_0 * s
+    di_dt = alpha * s * i - beta * i - kappa_0 * i - kappa * i
+    dr_dt = kappa_0 * s + beta * i
     dx_dt = (kappa_0 + kappa) * i
-
 
     return [ds_dt, di_dt, dr_dt, dx_dt]
 
@@ -97,8 +97,7 @@ class Model:
         """
         tspan = np.linspace(0, tf_days, numpoints)
 
-        return call_solver(self.func, self.p, self.w0,
-                           tspan)
+        return call_solver(self.func, self.p, self.w0, tspan)
 
     # pylint: disable=R0201
     def _setmodel(self):
@@ -108,9 +107,11 @@ class Model:
     def r0(self):
         """ Returns reproduction number
         r0 = alpha/beta"""
-        return self.p[0]/self.p[1]
+        return self.p[0] / self.p[1]
 
-    def fit(self, t_obs, n_i_obs, population, inplace=False):
+    def fit(
+        self, t_obs, n_i_obs, population, fit_index=True, inplace=False,
+    ):
         """ Use the Levenberg-Marquardt algorithm to fit
         the parameter alpha, as beta is assumed constant
 
@@ -122,27 +123,48 @@ class Model:
         Return
         """
 
+        # if no par_index is provided, fit all model parameters
+        if fit_index == True:
+            fit_index = [True for i in range(len(self.p))]
+        else:
+            fix_index = [not i for i in fit_index]
+
         days_obs = t_obs
 
-        def function_handle(t, alpha, beta=self.p[1], population=population):
-            p = [alpha, beta]
-            i_mod = call_solver(self.func, p, self.w0, t)
+        # Initial values of the parameters to be fitted
+        fit_params0 = np.array(self.p)
+        # Define fixed parameters: this set of parameters won't be fitted
+        # fixed_params = self.p[fix_index]
+
+        def function_handle(t, fit_param0, fit_param1, population=population):
+            params = np.array(self.p)
+            fit_params = np.array([fit_param0, fit_param1])
+            params[fit_index] = fit_params[fit_index]
+            self.p = params
+            print(fit_params)
+            i_mod = call_solver(self.func, self.p, self.w0, t)
             return i_mod[:, 2] * population
 
-        # Fit alpha
-        alpha_opt = curve_fit(f=function_handle,
-                                    xdata=days_obs, ydata=n_i_obs, p0=self.p[0])
-        p_new = np.array(self.p)
-        p_new[0] = alpha_opt[0]
-        self.p = p_new
+        # Fit parameters
+        par_opt = curve_fit(
+            f=function_handle, xdata=days_obs, ydata=n_i_obs, p0=fit_params0
+        )
+        # p_new = np.array(self.p)
+        # p_new[0] = alpha_opt[0]
+        # self.p = p_new
+        self.p[fit_index] = par_opt[fit_index]
         # return p_new, pcov
+
 
 class SIR(Model):
     """ SIR model definition """
+
     def _setmodel(self):
         self.func = sir
 
+
 class SIRX(Model):
     """ SIRX model definition """
+
     def _setmodel(self):
         self.func = sirx
