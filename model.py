@@ -83,15 +83,36 @@ def sirx(w, t, p):
 class Model:
     """ Base model definition """
     CSV_ROW = []
+    NUM_PARAMS = 4
+    NUM_IC = 4
+    FUNC = None
 
-    def __init__(self, p, w0, pop):
-        self.func = None
-        self._setmodel()
-        self.p = p
-        self.w0 = w0
+    def __init__(self):
         self.sol = None
-        self.pop = pop
-        print(self.__class__.CSV_ROW)
+        self.p = None
+        self.pop = None
+        self.w0 = None
+        self.pcov = None
+
+    def _set_params(self, p, initial_conds):
+        """ Set model parameters.
+        input:
+        p: parameters of the model. The parameters units are 1/day.
+        initial_conds: Initial conditions, in total number of individuals.
+        For instance, S0 = n_S0/population, where n_S0 is the number of subjects
+        who are susceptible to the disease.
+        """
+
+        num_params = self.__class__.NUM_PARAMS
+        num_ic = self.__class__.NUM_IC
+
+        if len(p) != num_params or len(initial_conds) != num_ic:
+            raise Exception("Invalid number of parameters \
+                             or initial conditions")
+        self.p = p
+        self.pop = np.sum(initial_conds)
+        self.w0 = initial_conds/self.pop
+        return self
 
     def export(self, f, delimiter=","):
         """ Export the output of the model in CSV format
@@ -124,17 +145,13 @@ class Model:
         """
         tspan = np.linspace(0, tf_days, numpoints)
 
-        sol = call_solver(self.func, self.p, self.w0,
+        sol = call_solver(self.__class__.FUNC, self.p, self.w0,
                           tspan)
         # Multiply by the population
         sol[:, 1:] *= self.pop
 
         self.sol = sol
         return self
-
-    # pylint: disable=R0201
-    def _setmodel(self):
-        raise Exception("Parent class cannot be initialized")
 
     @property
     def r0(self):
@@ -158,25 +175,78 @@ class Model:
 
         def function_handle(t, alpha, beta=self.p[1], population=population):
             p = [alpha, beta]
-            i_mod = call_solver(self.func, p, self.w0, t)
+            i_mod = call_solver(self.__class__.FUNC, p, self.w0, t)
             return i_mod[:, 2] * population
 
         # Fit alpha
-        alpha_opt = curve_fit(f=function_handle,
+        alpha_opt, pcov = curve_fit(f=function_handle,
                               xdata=days_obs, ydata=n_i_obs, p0=self.p[0])
         p_new = np.array(self.p)
         p_new[0] = alpha_opt[0]
         self.p = p_new
-        # return p_new, pcov
+        self.pcov = pcov
+        return self
 
 class SIR(Model):
     """ SIR model definition """
     CSV_ROW = ["Days", "S", "I", "R"]
-    def _setmodel(self):
-        self.func = sir
+    NUM_PARAMS = 2
+    NUM_IC = 3
+    FUNC = sir
+
+    def set_params(self, p, initial_conds):
+        """ Set model parameters.
+        input:
+        p: parameters of the model [alpha, beta]. All these
+           values should be in 1/day units.
+        initial_conds: Initial conditions (n_S0, n_I0, n_R0), where:
+          n_S0: Total number of susceptible to the infection
+          n_I0: Toral number of infected
+          n_R0: Total number of recovered
+          Note n_S0 + n_I0 + n_R0 = Population
+          
+          Internally, the model initial conditions are the ratios
+          S0 = n_S0/Population
+          I0 = n_I0/Population
+          R0 = n_R0/Population
+          which is consistent with the mathematical description
+          of the SIR model.
+          
+        output:
+        reference to self
+        """
+        self._set_params(p, initial_conds)
+        return self
 
 class SIRX(Model):
     """ SIRX model definition """
     CSV_ROW = ["Days", "S", "I", "R", "X"]
-    def _setmodel(self):
-        self.func = sirx
+    NUM_PARAMS = 4
+    NUM_IC = 4
+    FUNC = sirx
+
+    def set_params(self, p, initial_conds):
+        """ Set model parameters.
+        input:
+        p: parameters of the model [alpha, beta, kappa_0, kappa]. All these
+           values should be in 1/day units.
+        initial_conds: Initial conditions (S0, I0, R0, X0), where:
+          n_S0: Total number of susceptible to the infection
+          n_I0: Total number of infected
+          n_R0: Total number of recovered
+          n_X0: Total number of quarantined
+          Note: n_S0 + n_I0 + n_R0 + n_X0 = Population
+        
+        Internally, the model initial conditions are the ratios
+          S0 = n_S0/Population
+          I0 = n_I0/Population
+          R0 = n_R0/Population
+          X0 = n_X0/Population
+          which is consistent with the mathematical description
+          of the SIR model.
+          
+        output:
+        reference to self
+        """
+        self._set_params(p, initial_conds)
+        return self

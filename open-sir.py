@@ -19,9 +19,7 @@ def run_cli():
 
     args = parser.parse_args()
     p = np.array(ast.literal_eval(args.parameters))
-    w = np.array(ast.literal_eval(args.initial_conds))
-    pop = np.sum(w)
-    w0 = w/pop
+    w0 = np.array(ast.literal_eval(args.initial_conds))
     model = MODEL_SIR if args.model == "sir" else MODEL_SIRX
     kwargs = {}
 
@@ -29,11 +27,11 @@ def run_cli():
         kwargs["tf_days"] = args.time
 
     if model == MODEL_SIR:
-        sol = SIR(p, w0, pop)
+        sol = SIR()
     else:
-        sol = SIRX(p, w0, pop)
+        sol = SIRX()
 
-    sol.solve(**kwargs).export(sys.stdout)
+    sol.set_params(p, w0).solve(**kwargs).export(sys.stdout)
 
 if __name__ == "__main__":
     run_cli()
