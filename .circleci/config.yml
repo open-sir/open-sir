@@ -6,10 +6,10 @@ orbs:
 aliases:
   - &py-docker-image circleci/python:3.7
   - &working-directory ~/repo
-  - &py-cache-key v1-{{ checksum "Pipfile.lock" }}
+  - &py-cache-key v2-{{ checksum "Pipfile.lock" }}
   - &py-cache-restore-keys
-    - v1-{{ checksum "Pipfile.lock" }}
-    - v1-
+    - v2-{{ checksum "Pipfile.lock" }}
+    - v2-
 
 executors:
   py-executor:
@@ -24,7 +24,6 @@ commands:
       - checkout
       - restore_cache:
           keys: *py-cache-restore-keys
-      - run: pip install pipenv
 
 jobs:
   bootstrap:
@@ -36,7 +35,7 @@ jobs:
       - save_cache:
           key: *py-cache-key
           paths:
-            - "venv"
+            - ~/.local/share
 
   lint:
     description: Run pylint
