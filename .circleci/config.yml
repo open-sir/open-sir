@@ -87,9 +87,9 @@ workflows:
           requires:
             - lint
             - test
-          # filters:
-          #   branches:
-          #     only: master
+          filters:
+            branches:
+              only: master
           image: $DOCKER_LOGIN/$CIRCLE_PROJECT_REPONAME
           tag: latest #TODO: version this somehow, defaults to $CIRCLE_SHA1
           use-docker-credentials-store: true
