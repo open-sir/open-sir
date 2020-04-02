@@ -90,6 +90,6 @@ workflows:
           filters:
             branches:
               only: master
-          image: $DOCKER_USERNAME/$CIRCLE_PROJECT_REPONAME
+          image: $DOCKER_LOGIN/$CIRCLE_PROJECT_REPONAME
           tag: latest #TODO: version this somehow, defaults to $CIRCLE_SHA1
           use-docker-credentials-store: true
