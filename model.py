@@ -82,6 +82,7 @@ def sirx(w, t, p):
 
 class Model:
     """ Base model definition """
+
     CSV_ROW = []
     NUM_PARAMS = 4
     NUM_IC = 4
@@ -107,11 +108,13 @@ class Model:
         num_ic = self.__class__.NUM_IC
 
         if len(p) != num_params or len(initial_conds) != num_ic:
-            raise Exception("Invalid number of parameters \
-                             or initial conditions")
+            raise Exception(
+                "Invalid number of parameters \
+                             or initial conditions"
+            )
         self.p = p
         self.pop = np.sum(initial_conds)
-        self.w0 = initial_conds/self.pop
+        self.w0 = initial_conds / self.pop
         return self
 
     def export(self, f, delimiter=","):
@@ -125,8 +128,7 @@ class Model:
         if self.sol is None:
             raise Exception("Missing call to solve()")
 
-        np.savetxt(f, self.sol, header=",".join(self.__class__.CSV_ROW),
-                   delimiter=",")
+        np.savetxt(f, self.sol, header=",".join(self.__class__.CSV_ROW), delimiter=",")
 
     def fetch(self):
         """ Fetch the data from the model.
@@ -144,15 +146,9 @@ class Model:
         Reference to self
         """
         tspan = np.linspace(0, tf_days, numpoints)
-
-<<<<<<< HEAD
-        sol = call_solver(self.__class__.FUNC, self.p, self.w0,
-                          tspan)
+        sol = call_solver(self.__class__.FUNC, self.p, self.w0, tspan)
         # Multiply by the population
         sol[:, 1:] *= self.pop
-=======
-        return call_solver(self.func, self.p, self.w0, tspan)
->>>>>>> refactor: lintingmodel.py
 
         self.sol = sol
         return self
@@ -163,9 +159,7 @@ class Model:
         r0 = alpha/beta"""
         return self.p[0] / self.p[1]
 
-    def fit(
-        self, t_obs, n_i_obs, population, fit_index=True, inplace=False,
-    ):
+    def fit(self, t_obs, n_i_obs, population, fit_index=None):
         """ Use the Levenberg-Marquardt algorithm to fit
         the parameter alpha, as beta is assumed constant
 
@@ -177,55 +171,39 @@ class Model:
         Return
         """
 
-        # if no par_index is provided, fit only the first positional parameter
-        # self.p[0]
-        if fit_index == True:
+        # if no par_index is provided, fit only the first parameter
+        if fit_index is None:
             fit_index = [False for i in range(len(self.p))]
             fit_index[0] = True
 
-<<<<<<< HEAD
-        def function_handle(t, alpha, beta=self.p[1], population=population):
-            p = [alpha, beta]
-            i_mod = call_solver(self.__class__.FUNC, p, self.w0, t)
-            return i_mod[:, 2] * population
+        days_obs = t_obs
 
-        # Fit alpha
-        alpha_opt, pcov = curve_fit(f=function_handle,
-                              xdata=days_obs, ydata=n_i_obs, p0=self.p[0])
-        p_new = np.array(self.p)
-        p_new[0] = alpha_opt[0]
-        self.p = p_new
-        self.pcov = pcov
-        return self
-=======
         # Initial values of the parameters to be fitted
         fit_params0 = np.array(self.p)[fit_index]
         # Define fixed parameters: this set of parameters won't be fitted
         # fixed_params = self.p[fix_index]
 
-        def function_handle(t, *fit_params, population=population):
+        def function_handle(t, *par_fit, population=population):
             params = np.array(self.p)
-            params[fit_index] = np.array(fit_params)
+            params[fit_index] = par_fit
             self.p = params
-            i_mod = call_solver(self.func, self.p, self.w0, t)
+            i_mod = call_solver(self.__class__.FUNC, self.p, self.w0, t)
             return i_mod[:, 2] * population
 
         # Fit parameters
         par_opt, pcov = curve_fit(
-            f=function_handle, xdata=t_obs, ydata=n_i_obs, p0=fit_params0
+            f=function_handle, xdata=days_obs, ydata=n_i_obs, p0=fit_params0
         )
-        for i in par_opt:
-            print(i)
-        # params_opt = np.array(self.p)
-        # params_opt[fit_index] = np.array(par_opt)
+        # p_new = np.array(self.p)
+        # p_new[0] = alpha_opt[0]
+        # self.p = p_new
         self.p[fit_index] = par_opt
         # return p_new, pcov
->>>>>>> refactor: lintingmodel.py
 
 
 class SIR(Model):
     """ SIR model definition """
-<<<<<<< HEAD
+
     CSV_ROW = ["Days", "S", "I", "R"]
     NUM_PARAMS = 2
     NUM_IC = 3
@@ -254,16 +232,11 @@ class SIR(Model):
         """
         self._set_params(p, initial_conds)
         return self
-=======
-
-    def _setmodel(self):
-        self.func = sir
->>>>>>> refactor: lintingmodel.py
 
 
 class SIRX(Model):
     """ SIRX model definition """
-<<<<<<< HEAD
+
     CSV_ROW = ["Days", "S", "I", "R", "X"]
     NUM_PARAMS = 4
     NUM_IC = 4
@@ -294,8 +267,3 @@ class SIRX(Model):
         """
         self._set_params(p, initial_conds)
         return self
-=======
-
-    def _setmodel(self):
-        self.func = sirx
->>>>>>> refactor: lintingmodel.py
