@@ -159,9 +159,7 @@ class Model:
         r0 = alpha/beta"""
         return self.p[0] / self.p[1]
 
-    def fit(
-        self, t_obs, n_i_obs, population, fit_index=True, inplace=False,
-    ):
+    def fit(self, t_obs, n_i_obs, population, fit_index=None):
         """ Use the Levenberg-Marquardt algorithm to fit
         the parameter alpha, as beta is assumed constant
 
@@ -173,9 +171,8 @@ class Model:
         Return
         """
 
-        # if no par_index is provided, fit only the first positional parameter
-        # self.p[0]
-        if fit_index == True:
+        # if no par_index is provided, fit only the first parameter
+        if fit_index is None:
             fit_index = [False for i in range(len(self.p))]
             fit_index[0] = True
 
@@ -184,9 +181,9 @@ class Model:
         # Define fixed parameters: this set of parameters won't be fitted
         # fixed_params = self.p[fix_index]
 
-        def function_handle(t, *fit_params, population=population):
+        def function_handle(t, *par_fit, population=population):
             params = np.array(self.p)
-            params[fit_index] = np.array(fit_params)
+            params[fit_index] = par_fit
             self.p = params
             i_mod = call_solver(self.__class__.FUNC, self.p, self.w0, t)
             return i_mod[:, 2] * population
@@ -195,10 +192,9 @@ class Model:
         par_opt, pcov = curve_fit(
             f=function_handle, xdata=t_obs, ydata=n_i_obs, p0=fit_params0
         )
-        for i in par_opt:
-            print(i)
-        # params_opt = np.array(self.p)
-        # params_opt[fit_index] = np.array(par_opt)
+        # p_new = np.array(self.p)
+        # p_new[0] = alpha_opt[0]
+        # self.p = p_new
         self.p[fit_index] = par_opt
         self.pcov = pcov
         return self
