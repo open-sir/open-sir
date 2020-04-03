@@ -177,13 +177,11 @@ class Model:
         Return
         """
 
-        # if no par_index is provided, fit all model parameters
+        # if no par_index is provided, fit only the first positional parameter
+        # self.p[0]
         if fit_index == True:
-            fit_index = [True for i in range(len(self.p))]
-        else:
-            fix_index = [not i for i in fit_index]
-
-        days_obs = t_obs
+            fit_index = [False for i in range(len(self.p))]
+            fit_index[0] = True
 
 <<<<<<< HEAD
         def function_handle(t, alpha, beta=self.p[1], population=population):
@@ -201,27 +199,26 @@ class Model:
         return self
 =======
         # Initial values of the parameters to be fitted
-        fit_params0 = np.array(self.p)
+        fit_params0 = np.array(self.p)[fit_index]
         # Define fixed parameters: this set of parameters won't be fitted
         # fixed_params = self.p[fix_index]
 
-        def function_handle(t, fit_param0, fit_param1, population=population):
+        def function_handle(t, *fit_params, population=population):
             params = np.array(self.p)
-            fit_params = np.array([fit_param0, fit_param1])
-            params[fit_index] = fit_params[fit_index]
+            params[fit_index] = np.array(fit_params)
             self.p = params
-            print(fit_params)
             i_mod = call_solver(self.func, self.p, self.w0, t)
             return i_mod[:, 2] * population
 
         # Fit parameters
-        par_opt = curve_fit(
-            f=function_handle, xdata=days_obs, ydata=n_i_obs, p0=fit_params0
+        par_opt, pcov = curve_fit(
+            f=function_handle, xdata=t_obs, ydata=n_i_obs, p0=fit_params0
         )
-        # p_new = np.array(self.p)
-        # p_new[0] = alpha_opt[0]
-        # self.p = p_new
-        self.p[fit_index] = par_opt[fit_index]
+        for i in par_opt:
+            print(i)
+        # params_opt = np.array(self.p)
+        # params_opt[fit_index] = np.array(par_opt)
+        self.p[fit_index] = par_opt
         # return p_new, pcov
 >>>>>>> refactor: lintingmodel.py
 
