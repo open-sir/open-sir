@@ -172,7 +172,7 @@ def ci_block_cv(model, t_obs, n_I_obs, population, lags=1, min_sample=3):
         # Store the rolling parameters
         p_list.append(model.p)
         # Predict for the i+1 period
-        model.solve(t_obs[i + lags], numpoints=t_obs[i + lags] + 1)
+        model.solve(t_obs[i + lags], numpoints=int(t_obs[i + lags]) + 1)
         pred = model.fetch()[:, 2]
         # Calculate mean squared errors
         mse = np.sqrt((pred[i - 1 + lags] - n_I_obs[i - 1 + lags]) ** 2)
