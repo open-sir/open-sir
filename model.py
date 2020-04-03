@@ -192,7 +192,6 @@ class Model:
         par_opt, pcov = curve_fit(
             f=function_handle, xdata=t_obs, ydata=n_i_obs, p0=fit_params0
         )
-        self.pcov = pcov
         self.p[fit_index] = par_opt
         self.pcov = pcov
         return self
