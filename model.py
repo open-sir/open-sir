@@ -194,9 +194,7 @@ class Model:
         par_opt, pcov = curve_fit(
             f=function_handle, xdata=days_obs, ydata=n_i_obs, p0=fit_params0
         )
-        # p_new = np.array(self.p)
-        # p_new[0] = alpha_opt[0]
-        # self.p = p_new
+        self.pcov = pcov
         self.p[fit_index] = par_opt
         # return p_new, pcov
 
@@ -219,14 +217,14 @@ class SIR(Model):
           n_I0: Toral number of infected
           n_R0: Total number of recovered
           Note n_S0 + n_I0 + n_R0 = Population
-          
+
           Internally, the model initial conditions are the ratios
           S0 = n_S0/Population
           I0 = n_I0/Population
           R0 = n_R0/Population
           which is consistent with the mathematical description
           of the SIR model.
-          
+
         output:
         reference to self
         """
@@ -253,7 +251,7 @@ class SIRX(Model):
           n_R0: Total number of recovered
           n_X0: Total number of quarantined
           Note: n_S0 + n_I0 + n_R0 + n_X0 = Population
-        
+
         Internally, the model initial conditions are the ratios
           S0 = n_S0/Population
           I0 = n_I0/Population
@@ -261,7 +259,7 @@ class SIRX(Model):
           X0 = n_X0/Population
           which is consistent with the mathematical description
           of the SIR model.
-          
+
         output:
         reference to self
         """
