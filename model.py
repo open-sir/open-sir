@@ -159,7 +159,7 @@ class Model:
         r0 = alpha/beta"""
         return self.p[0] / self.p[1]
 
-    def fit(self, t_obs, n_i_obs, population, inplace=False):
+    def fit(self, t_obs, n_i_obs, population, fit_index=None):
         """ Use the Levenberg-Marquardt algorithm to fit
         the parameter alpha, as beta is assumed constant
 
@@ -171,24 +171,36 @@ class Model:
         Return
         """
 
-        days_obs = t_obs
+        # if no par_index is provided, fit only the first parameter
+        if fit_index is None:
+            fit_index = [False for i in range(len(self.p))]
+            fit_index[0] = True
 
-        def function_handle(t, alpha, beta=self.p[1], population=population):
-            p = [alpha, beta]
-            i_mod = call_solver(self.__class__.FUNC, p, self.w0, t)
+        # Initial values of the parameters to be fitted
+        fit_params0 = np.array(self.p)[fit_index]
+        # Define fixed parameters: this set of parameters won't be fitted
+        # fixed_params = self.p[fix_index]
+
+        def function_handle(t, *par_fit, population=population):
+            params = np.array(self.p)
+            params[fit_index] = par_fit
+            self.p = params
+            i_mod = call_solver(self.__class__.FUNC, self.p, self.w0, t)
             return i_mod[:, 2] * population
 
-        # Fit alpha
-        alpha_opt, pcov = curve_fit(f=function_handle,
-                              xdata=days_obs, ydata=n_i_obs, p0=self.p[0])
-        p_new = np.array(self.p)
-        p_new[0] = alpha_opt[0]
-        self.p = p_new
+        # Fit parameters
+        par_opt, pcov = curve_fit(
+            f=function_handle, xdata=t_obs, ydata=n_i_obs, p0=fit_params0
+        )
+        self.p[fit_index] = par_opt
         self.pcov = pcov
         return self
+        # return p_new, pcov
+
 
 class SIR(Model):
     """ SIR model definition """
+
     CSV_ROW = ["Days", "S", "I", "R"]
     NUM_PARAMS = 2
     NUM_IC = 3
