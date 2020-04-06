@@ -4,18 +4,19 @@ import argparse
 import ast
 import sys
 import numpy as np
-from model import SIR, SIRX
+from models import SIR, SIRX
 
 MODEL_SIR = 0
 MODEL_SIRX = 1
 
+
 def run_cli():
     """ This function runs the main CLI routine """
     parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--model', default="sir", choices=["sir", "sirx"])
-    parser.add_argument('-p', '--parameters', required=True)
-    parser.add_argument('-i', '--initial-conds', required=True)
-    parser.add_argument('-t', '--time', type=int)
+    parser.add_argument("-m", "--model", default="sir", choices=["sir", "sirx"])
+    parser.add_argument("-p", "--parameters", required=True)
+    parser.add_argument("-i", "--initial-conds", required=True)
+    parser.add_argument("-t", "--time", type=int)
 
     args = parser.parse_args()
     p = np.array(ast.literal_eval(args.parameters))
@@ -32,6 +33,7 @@ def run_cli():
         sol = SIRX()
 
     sol.set_params(p, w0).solve(**kwargs).export(sys.stdout)
+
 
 if __name__ == "__main__":
     run_cli()
