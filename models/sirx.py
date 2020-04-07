@@ -42,26 +42,31 @@ class SIRX(Model):
 
     def set_params(self, p, initial_conds):
         """ Set model parameters.
-        input:
-        p: parameters of the model [alpha, beta, kappa_0, kappa]. All these
-           values should be in 1/day units.
-        initial_conds: Initial conditions (S0, I0, R0, X0), where:
-          n_S0: Total number of susceptible to the infection
-          n_I0: Total number of infected
-          n_R0: Total number of recovered
-          n_X0: Total number of quarantined
-          Note: n_S0 + n_I0 + n_R0 + n_X0 = Population
 
-        Internally, the model initial conditions are the ratios
-          S0 = n_S0/Population
-          I0 = n_I0/Population
-          R0 = n_R0/Population
-          X0 = n_X0/Population
-          which is consistent with the mathematical description
-          of the SIR model.
+        Args:
+            p (list): parameters of the model [alpha, beta, kappa_0, kappa]. All these
+                 values should be in 1/day units.
+            initial_conds (list): Initial conditions (n_S0, n_I0, n_R0, n_X0), where:
 
-        output:
-        reference to self
+                - n_S0: Total number of susceptible to the infection
+                - n_I0: Total number of infected
+                - n_R0: Total number of recovered
+                - n_X0: Total number of quarantined
+
+                Note: n_S0 + n_I0 + n_R0 + n_X0 = Population
+
+                Internally, the model initial conditions are the ratios
+
+                - S0 = n_S0/Population
+                - I0 = n_I0/Population
+                - R0 = n_R0/Population
+                - X0 = n_X0/Population
+
+                which is consistent with the mathematical description
+                of the SIR model.
+
+        Returns:
+            SIRX: Reference to self
         """
         self._set_params(p, initial_conds)
         return self
