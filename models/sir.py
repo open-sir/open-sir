@@ -37,24 +37,29 @@ class SIR(Model):
 
     def set_params(self, p, initial_conds):
         """ Set model parameters.
-        input:
-        p: parameters of the model [alpha, beta]. All these
-           values should be in 1/day units.
-        initial_conds: Initial conditions (n_S0, n_I0, n_R0), where:
-          n_S0: Total number of susceptible to the infection
-          n_I0: Toral number of infected
-          n_R0: Total number of recovered
-          Note n_S0 + n_I0 + n_R0 = Population
 
-          Internally, the model initial conditions are the ratios
-          S0 = n_S0/Population
-          I0 = n_I0/Population
-          R0 = n_R0/Population
-          which is consistent with the mathematical description
-          of the SIR model.
+        Args:
+            p (list): parameters of the model [alpha, beta]. All these
+                 values should be in 1/day units.
+            initial_conds (list): Initial conditions (n_S0, n_I0, n_R0), where:
 
-        output:
-        reference to self
+                - n_S0: Total number of susceptible to the infection
+                - n_I0: Toral number of infected
+                - n_R0: Total number of recovered
+
+                Note n_S0 + n_I0 + n_R0 = Population
+
+                Internally, the model initial conditions are the ratios
+
+                - S0 = n_S0/Population
+                - I0 = n_I0/Population
+                - R0 = n_R0/Population
+
+                which is consistent with the mathematical description
+                of the SIR model.
+
+        Returns:
+            SIR: reference to self
         """
         self._set_params(p, initial_conds)
         return self

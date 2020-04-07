@@ -44,11 +44,14 @@ class Model:
 
     def _set_params(self, p, initial_conds):
         """ Set model parameters.
-        input:
-        p: parameters of the model. The parameters units are 1/day.
-        initial_conds: Initial conditions, in total number of individuals.
-        For instance, S0 = n_S0/population, where n_S0 is the number of subjects
-        who are susceptible to the disease.
+        Args:
+            p (list): parameters of the model. The parameters units are 1/day.
+            initial_conds (list): Initial conditions, in total number of individuals.
+            For instance, S0 = n_S0/population, where n_S0 is the number of subjects
+            who are susceptible to the disease.
+
+        Returns:
+            Model: Reference to self
         """
 
         num_params = self.__class__.NUM_PARAMS
@@ -65,12 +68,14 @@ class Model:
         return self
 
     def export(self, f, delimiter=","):
-        """ Export the output of the model in CSV format
-        Calling this before solve() raises an exception.
+        """ Export the output of the model in CSV format.
 
-        input:
-        f: file name or descriptor
-        delimiter: delimiter of the CSV file
+        Note:
+            Calling this before solve() raises an exception.
+
+        Args:
+            f: file name or descriptor
+            delimiter (str): delimiter of the CSV file
         """
         if self.sol is None:
             raise Exception("Missing call to solve()")
@@ -79,18 +84,21 @@ class Model:
 
     def fetch(self):
         """ Fetch the data from the model.
-        The first row is the time in days
+
+        Returns:
+            np.array: An array with the data. The first column is the time.
         """
         return self.sol
 
     def solve(self, tf_days=DAYS, numpoints=NUMPOINTS):
         """ Solve using children class model.
-        input:
-        tf_days: number of days to simulate
-        numpoints: number of points for the simulation.
 
-        output:
-        Reference to self
+        Args:
+            tf_days (int): number of days to simulate
+            numpoints (int): number of points for the simulation.
+
+        Returns:
+            Model: Reference to self
         """
         tspan = np.linspace(0, tf_days, numpoints)
         sol = call_solver(self._model, self.p, self.w0, tspan)
@@ -103,19 +111,24 @@ class Model:
     @property
     def r0(self):
         """ Returns reproduction number
-        r0 = alpha/beta"""
+
+        Returns:
+            float: r0 (alpha/beta)
+        """
         return self.p[0] / self.p[1]
 
     def fit(self, t_obs, n_i_obs, population, fit_index=None):
         """ Use the Levenberg-Marquardt algorithm to fit
         the parameter alpha, as beta is assumed constant
 
-        inputs:
-        t_obs: Vector of days corresponding to the observations of number of infected people
-        n_i_obs: Vector of number of infected people
-        population: Size of the objective population
+        Args:
+            t_obs (np.array): Vector of days corresponding to the observations
+            of number of infected people
+            n_i_obs (np.array): Vector of number of infected people
+            population: Size of the objective population
 
-        Return
+        Returns:
+            Model: Reference to self
         """
 
         # if no par_index is provided, fit only the first parameter
