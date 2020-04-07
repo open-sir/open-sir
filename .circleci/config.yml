@@ -60,7 +60,6 @@ jobs:
     executor: docker/machine
     steps:
       - checkout
-      - docker/check
       - docker/build:
           image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
 
