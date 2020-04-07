@@ -34,7 +34,6 @@ class SIR(Model):
     CSV_ROW = ["Days", "S", "I", "R"]
     NUM_PARAMS = 2
     NUM_IC = 3
-    FUNC = sir
 
     def set_params(self, p, initial_conds):
         """ Set model parameters.
@@ -59,3 +58,7 @@ class SIR(Model):
         """
         self._set_params(p, initial_conds)
         return self
+
+    @property
+    def _model(self):
+        return sir
