@@ -1,0 +1,12 @@
+[
+  {"day":1, "infected":3269},
+  {"day":2, "infected":3983},
+  {"day":3, "infected":5018},
+  {"day":4, "infected":5683},
+  {"day":5, "infected":6650},
+  {"day":6, "infected":8077},
+  {"day":7, "infected":9529},
+  {"day":8, "infected":11658},
+  {"day":9, "infected":14543},
+  {"day":10, "infected":17089}
+]
