@@ -39,7 +39,6 @@ class SIRX(Model):
     CSV_ROW = ["Days", "S", "I", "R", "X"]
     NUM_PARAMS = 4
     NUM_IC = 4
-    FUNC = sirx
 
     def set_params(self, p, initial_conds):
         """ Set model parameters.
@@ -66,3 +65,7 @@ class SIRX(Model):
         """
         self._set_params(p, initial_conds)
         return self
+
+    @property
+    def _model(self):
+        return sirx

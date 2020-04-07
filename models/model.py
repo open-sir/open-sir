@@ -30,7 +30,6 @@ class Model:
     CSV_ROW = []
     NUM_PARAMS = 4
     NUM_IC = 4
-    FUNC = None
 
     def __init__(self):
         self.sol = None
@@ -38,6 +37,10 @@ class Model:
         self.pop = None
         self.w0 = None
         self.pcov = None
+
+    @property
+    def _model(self):
+        raise Exception()
 
     def _set_params(self, p, initial_conds):
         """ Set model parameters.
@@ -90,7 +93,7 @@ class Model:
         Reference to self
         """
         tspan = np.linspace(0, tf_days, numpoints)
-        sol = call_solver(self.__class__.FUNC, self.p, self.w0, tspan)
+        sol = call_solver(self._model, self.p, self.w0, tspan)
         # Multiply by the population
         sol[:, 1:] *= self.pop
 
@@ -129,7 +132,7 @@ class Model:
             params = np.array(self.p)
             params[fit_index] = par_fit
             self.p = params
-            i_mod = call_solver(self.__class__.FUNC, self.p, self.w0, t)
+            i_mod = call_solver(self._model, self.p, self.w0, t)
             return i_mod[:, 2] * pop
 
         # Fit parameters
