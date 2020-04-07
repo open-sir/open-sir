@@ -27,4 +27,4 @@ allow_prereleases = true
 start = "python open-sir.py"
 lint = "pylint **/*.py"
 test = "pytest"
-doc = "make html"
+doc = "sphinx-build -M html . _build"
