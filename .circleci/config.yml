@@ -55,6 +55,15 @@ jobs:
           name: Run tests
           command: pipenv run test
 
+  docs:
+    description: Build docs
+    executor: py-executor
+    steps:
+      - bootstrap
+      - run:
+          name: Build docs
+          command: pipenv run doc
+
   build:
     description: Build Docker image
     executor: docker/machine
@@ -74,10 +83,14 @@ workflows:
       - test:
           requires:
             - bootstrap
+      - docs:
+          requires:
+            - bootstrap
       - build:
           requires:
             - lint
             - test
+            - docs
           filters:
             branches:
               ignore:
@@ -86,6 +99,7 @@ workflows:
           requires:
             - lint
             - test
+            - docs
           filters:
             branches:
               only: master
