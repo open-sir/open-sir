@@ -11,50 +11,27 @@ The current stage of the software is *Alpha*.
 
 So far, Open-SIR provides an implementation of the SIR model and the novel [SIR-X model, developed by Maier and Dirk](https://science.sciencemag.org/content/early/2020/04/07/science.abb4557.full) from the [Robert Koch Institut](http://rocs.hu-berlin.de/corona/docs/forecast/model/#sir-x-dynamics-outbreaks-with-temporally-increasing-interventions).
 
-## Development Setup
-
-Open-SIR uses [Pipenv](https://pipenv.pypa.io/en/latest/) to automatically create a virtual environment and manage python packages. The python packages required by Open-SIR are listed in the [Pipfile](Pipfile).
-
 ### Dependencies
 
-* Python 3.7
-* Pipenv
+* Python >= 3.2
+* Numpy
+* Sklearn
+* Scipy
 
-### Installation
+## Installation
+Open-SIR and all its dependencies can be installed from the repository using
+`pip`:
 
-After cloning the repository, change the current directory to the repository via `cd open-sir` and automatically install the environment from the Pipfile using Pipenv:
 ```
-pipenv install
-```
-Next, activate the Pipenv shell:
-```
-pipenv shell
-```
-You can run the following command to check that the installation succeeded.
-```
-pipenv run start -p '[0.95,0.38]' -i '[341555,445,0]' -t 6
+git clone https://github.com/open-sir/open-sir.git
+cd open-sir
+sudo pip install .
 ```
 
-
-## Build documentation
-
-Build the Sphinx documentation out of the open-sir Pipenv environment.
+In order to unintall Open-SIR simply execute:
 ```
-pipenv run doc
+sudo pip uninstall opensir
 ```
-
-## Running the tests
-
-Test the package running the tests out of the open-sir Pipenv environment.
-```
-pipenv run test
-```
-
-The documentation is placed under `_build/html`.
-
-### Coding style tests
-
-This project uses [Pylint](https://www.pylint.org/) and [Black 19.10b0](https://black.readthedocs.io/en/stable/) to ensure consistent coding practices, and enforced by CircleCI. Non-default parameters are available in [.pylintrc](.pylintrc).
 
 ## Usage example
 
@@ -64,12 +41,12 @@ case that no lockdown would be taking place.
 
 ### Command line interface
 
-In the Pipenv shell, check that the installation was successful by calling the CLI:
+Check that the installation was successful by calling the CLI:
 ```
-python open-sir.py -p '[0.95,0.38]' -i '[341555,445,0]' -t 6 > data.csv
+opensir-cli -p '[0.95,0.38]' -i '[341555,445,0]' -t 6 > data.csv
 ```
 
-The output of open-sir.py is a .csv file with the predictions.
+The output of opensir-cli is a .csv file with the predictions.
 
 *Note: On Windows, the CLI must be run from Powershell or any bash shell such as [Git BASH](https://gitforwindows.org/)*
 
@@ -99,6 +76,50 @@ And learn how the API can be used to:
 * Fit parameters to existing data 
 * Predict susceptible, infected and removed population
 * Calculate confidence intervals of the predictions
+
+## Development Setup
+
+Open-SIR Development Environment uses
+[Pipenv](https://pipenv.pypa.io/en/latest/) to automatically create a virtual
+environment and manage python packages. The python packages required by
+Open-SIR are listed in the [Pipfile](Pipfile).
+
+After cloning the repository, change the current directory to the repository
+via `cd open-sir` and automatically install the environment from the Pipfile
+using Pipenv:
+```
+pipenv install
+```
+Next, activate the Pipenv shell:
+```
+pipenv shell
+```
+You can run the following command to check that the installation succeeded.
+```
+pipenv run start -p '[0.95,0.38]' -i '[341555,445,0]' -t 6
+```
+
+### Build documentation
+
+Build the Sphinx documentation out of the open-sir Pipenv environment.
+```
+pipenv run doc
+```
+
+### Running the tests
+
+Test the package running the tests out of the open-sir Pipenv environment.
+```
+pipenv run test
+```
+
+The documentation is placed under `_build/html`.
+
+### Coding style tests
+
+This project uses [Pylint](https://www.pylint.org/) and [Black 19.10b0](https://black.readthedocs.io/en/stable/) to ensure consistent coding practices, and enforced by CircleCI. Non-default parameters are available in [.pylintrc](.pylintrc).
+
+
 
 ## Authors
 
