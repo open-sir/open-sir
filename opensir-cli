@@ -2,10 +2,8 @@
 # pylint: disable=C0103
 """ Open-SIR CLI implementation """
 import argparse
-import ast
 import sys
 import toml
-import numpy as np
 from opensir.models import SIR, SIRX
 
 MODEL_SIR = 0
@@ -20,19 +18,23 @@ def run_cli():
     
     """)
     parser.add_argument("-m", "--model", default="sir", choices=["sir", "sirx"])
-    parser.add_argument("-t", "--time", type=int, help = "Number of days for "
-    "the simulation")
-    parser.add_argument("-f", "--file", type=str, help = "Name of the "
-    "input file. If missing, the input file is read from STDIN")
+    parser.add_argument("-t", "--time", type=int, help="Number of days for "
+                        "the simulation")
+    parser.add_argument("-f", "--file", type=str, help="Name of the "
+                        "input file. If missing, the input file is read from STDIN")
+    parser.add_argument("-s", "--suppress_header", action="store_true",
+                        help="Suppress CSV header")
+    parser.add_argument("-d", "--delimiter", type=str, help="CSV delimiter",
+                        default=",")
 
     args = parser.parse_args()
-    if args.file == None:
+    if args.file is None:
         data = toml.loads(sys.stdin.read())
     else:
         data = toml.load(args.file)
 
     ic = data["initial_conds"]
-    params= data["parameters"]
+    params = data["parameters"]
 
     model = MODEL_SIR if args.model == "sir" else MODEL_SIRX
     kwargs = {}
@@ -50,7 +52,9 @@ def run_cli():
         w0 = [ic["S0"], ic["I0"], ic["R0"], ic["X0"]]
         sol = SIRX()
 
-    sol.set_params(p, w0).solve(**kwargs).export(sys.stdout)
+    sol.set_params(p, w0).solve(**kwargs).export(sys.stdout,
+                                                 suppress_header=args.suppress_header,
+                                                 delimiter=args.delimiter)
 
 
 if __name__ == "__main__":
