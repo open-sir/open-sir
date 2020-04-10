@@ -25,12 +25,12 @@ Open-SIR and all its dependencies can be installed from the repository using
 ```
 git clone https://github.com/open-sir/open-sir.git
 cd open-sir
-sudo pip install .
+pip install .
 ```
 
 In order to unintall Open-SIR simply execute:
 ```
-sudo pip uninstall opensir
+pip uninstall opensir
 ```
 
 ## Usage example
