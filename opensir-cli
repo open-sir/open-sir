@@ -4,6 +4,7 @@
 import argparse
 import ast
 import sys
+import toml
 import numpy as np
 from opensir.models import SIR, SIRX
 
@@ -13,15 +14,26 @@ MODEL_SIRX = 1
 
 def run_cli():
     """ This function runs the main CLI routine """
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="""
+    Run SIR or SIR-X model given a set of initial conditions and model
+    parameters.
+    
+    """)
     parser.add_argument("-m", "--model", default="sir", choices=["sir", "sirx"])
-    parser.add_argument("-p", "--parameters", required=True)
-    parser.add_argument("-i", "--initial-conds", required=True)
-    parser.add_argument("-t", "--time", type=int)
+    parser.add_argument("-t", "--time", type=int, help = "Number of days for "
+    "the simulation")
+    parser.add_argument("-f", "--file", type=str, help = "Name of the "
+    "input file. If missing, the input file is read from STDIN")
 
     args = parser.parse_args()
-    p = np.array(ast.literal_eval(args.parameters))
-    w0 = np.array(ast.literal_eval(args.initial_conds))
+    if args.file == None:
+        data = toml.loads(sys.stdin.read())
+    else:
+        data = toml.load(args.file)
+
+    ic = data["initial_conds"]
+    params= data["parameters"]
+
     model = MODEL_SIR if args.model == "sir" else MODEL_SIRX
     kwargs = {}
 
@@ -29,8 +41,13 @@ def run_cli():
         kwargs["tf_days"] = args.time
 
     if model == MODEL_SIR:
+        p = [params["alpha"], params["beta"]]
+        w0 = [ic["S0"], ic["I0"], ic["R0"]]
         sol = SIR()
     else:
+        p = [params["alpha"], params["beta"], params["kappa_0"],
+             params["kappa"]]
+        w0 = [ic["S0"], ic["I0"], ic["R0"], ic["X0"]]
         sol = SIRX()
 
     sol.set_params(p, w0).solve(**kwargs).export(sys.stdout)
