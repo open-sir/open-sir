@@ -10,11 +10,11 @@ Welcome to Open-SIR's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-.. autoclass:: models.SIR
+.. autoclass:: opensir.models.SIR
    :members:
    :inherited-members:
 
-.. autoclass:: models.SIRX
+.. autoclass:: opensir.models.SIRX
    :members:
    :inherited-members:
 
