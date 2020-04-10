@@ -16,6 +16,7 @@ jupyter = "*"
 sklearn = "*"
 sphinx = "*"
 sphinx-rtd-theme = "*"
+toml = "*"
 
 [requires]
 python_version = "3.7"
