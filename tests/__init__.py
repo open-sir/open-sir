@@ -1,2 +1,2 @@
 "test module __init__.py"
-from models import SIR, SIRX
+from opensir.models import SIR, SIRX

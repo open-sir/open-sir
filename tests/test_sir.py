@@ -7,7 +7,7 @@
 import numpy as np
 import pytest
 
-from models.sir import SIR
+from opensir.models import SIR
 
 DEFAULT_PARAMS = [0.95, 0.38] # Default parameters from WHO
 EALING_IC = [341555, 445, 0]  # Ealing initial conditions
