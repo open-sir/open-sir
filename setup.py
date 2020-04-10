@@ -25,6 +25,7 @@ setup(
           'scipy',
           'sklearn',
           'numpy',
+          'toml',
     ],
     long_description=read('README.md'),
     classifiers=[
