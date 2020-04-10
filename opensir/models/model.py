@@ -30,6 +30,7 @@ class Model:
     CSV_ROW = []
     NUM_PARAMS = 4
     NUM_IC = 4
+    NAME = None
 
     def __init__(self):
         self.sol = None
@@ -37,6 +38,7 @@ class Model:
         self.pop = None
         self.w0 = None
         self.pcov = None
+        self.fit_input = None
 
     @property
     def _model(self):
@@ -145,14 +147,21 @@ class Model:
             params = np.array(self.p)
             params[fit_index] = par_fit
             self.p = params
-            i_mod = call_solver(self._model, self.p, self.w0, t)
-            return i_mod[:, 2] * pop
+            self._update_ic() # Updates IC if necessary. For example, i_o/x_0 for SIR-X
+            sol_mod = call_solver(self._model, self.p, self.w0, t)
+            return sol_mod[:, self.fit_input] * pop
 
         # Fit parameters
+        # Ensure non-negativity and a loose upper bound
+        bounds = (np.zeros(len(fit_params0)), np.ones(len(fit_params0))*100)
+        # return p_new, pcov
         par_opt, pcov = curve_fit(
-            f=function_handle, xdata=t_obs, ydata=n_i_obs, p0=fit_params0
+            f=function_handle, xdata=t_obs, ydata=n_i_obs, p0=fit_params0, bounds=bounds
         )
         self.p[fit_index] = par_opt
         self.pcov = pcov  # This also flags that the model was fitted
         return self
-        # return p_new, pcov
+
+    def _update_ic(self):
+        """ updates initial conditions if necessary """
+        return self
