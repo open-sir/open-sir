@@ -30,6 +30,7 @@ class Model:
     CSV_ROW = []
     NUM_PARAMS = 4
     NUM_IC = 4
+    NAME = None
 
     def __init__(self):
         self.sol = None
@@ -38,7 +39,6 @@ class Model:
         self.w0 = None
         self.pcov = None
         self.fit_input = None
-        self.name = None
 
     @property
     def _model(self):
