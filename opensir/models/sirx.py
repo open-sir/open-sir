@@ -16,7 +16,7 @@ def sirx(w, t, p):
         X: Fraction of the population that is quarantined
 
     t: time
-    p: vector of parametersÑ
+    p: vector of parameters
 
         alpha: transmission rate
         beta: recovery / removal rate
