@@ -41,13 +41,61 @@ case that no lockdown would be taking place.
 
 ### Command line interface
 
-Check that the installation was successful by calling the CLI:
+It's possible to run the model using the CLI:
 
 ```
-opensir-cli -p '[0.95,0.38]' -i '[341555,445,0]' -t 6 > data.csv
+usage: opensir-cli [-h] [-m {sir,sirx}] [-t TIME] [-f FILE] [-s] [-d DELIMITER]
+
+Run SIR or SIR-X model given a set of initial conditions and model parameters.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -m {sir,sirx}, --model {sir,sirx}
+  -t TIME, --time TIME  Number of days for the simulation
+  -f FILE, --file FILE  Name of the input file. If missing, the input file is read from STDIN
+  -s, --suppress_header
+                        Suppress CSV header
+  -d DELIMITER, --delimiter DELIMITER
+                        CSV delimiter
 ```
 
-The output of opensir-cli is a .csv file with the predictions.
+The input file is a TOML file with the following format
+
+```
+[initial_conds]
+<cond> = value
+
+[parameters]
+<paran> = value
+```
+
+For instance, the following data is valid for running the SIR model with
+alpha=0.95, beta=0.38 and initial conditions S0=341555, I0=445 and R0=0
+
+```
+[initial_conds]
+S0 = 341555
+I0 = 445
+R0 = 0
+
+[parameters]
+alpha = 0.95
+beta = 0.38
+```
+
+Then, it's possible to run the model with T=6 days:
+
+```
+opensir-cli --model sir --time 6 --file input_file.txt
+```
+
+Or reading the input file from STDIN:
+
+```
+cat input_file | opensir-cli --model sir --time 6
+```
+
+The output of opensir-cli is a .csv file with the output of the model.
 
 *Note: On Windows, the CLI must be run from Powershell or any bash shell such as [Git BASH](https://gitforwindows.org/)*
 
@@ -97,7 +145,7 @@ pipenv shell
 ```
 You can run the following command to check that the installation succeeded.
 ```
-pipenv run start -p '[0.95,0.38]' -i '[341555,445,0]' -t 6
+pipenv run start -i input_file.txt -t 6
 ```
 
 ### Build documentation
