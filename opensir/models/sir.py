@@ -62,6 +62,8 @@ class SIR(Model):
             SIR: reference to self
         """
         self._set_params(p, initial_conds)
+        self.name = 'sir'
+        self.fit_input = 2 # By default, fit against infected
         return self
 
     @property

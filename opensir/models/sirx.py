@@ -16,7 +16,12 @@ def sirx(w, t, p):
         X: Fraction of the population that is quarantined
 
     t: time
-    p: vector of parameter
+    p: vector of parametersÑ
+
+        alpha: transmission rate
+        beta: recovery / removal rate
+        kappa_0: containment rate
+        kappa: quarantine rate
 
     returns:
     right hand side of the system of differential equation
@@ -24,10 +29,10 @@ def sirx(w, t, p):
     # unpack state variable
     s, i, r, x = w  # pylint: disable=W0612
     # unpack parameter
-    alpha, beta, kappa_0, kappa = p
+    alpha, beta, kappa_0, kappa, inf_over_test = p # pylint: disable=W0612
     ds_dt = -alpha * s * i - kappa_0 * s
     di_dt = alpha * s * i - beta * i - kappa_0 * i - kappa * i
-    dr_dt = kappa_0 * s + beta * i
+    dr_dt = beta * i + kappa_0 * s
     dx_dt = (kappa_0 + kappa) * i
 
     return [ds_dt, di_dt, dr_dt, dx_dt]
@@ -37,15 +42,15 @@ class SIRX(Model):
     """ SIRX model definition """
 
     CSV_ROW = ["Days", "S", "I", "R", "X"]
-    NUM_PARAMS = 4
+    NUM_PARAMS = 5
     NUM_IC = 4
 
     def set_params(self, p, initial_conds):
         """ Set model parameters.
 
         Args:
-            p (list): parameters of the model [alpha, beta, kappa_0, kappa]. All these
-                 values should be in 1/day units.
+            p (list): parameters of the model [alpha, beta, kappa_0, kappa, inf_over_test].
+                 All these values should be in 1/day units.
             initial_conds (list): Initial conditions (n_S0, n_I0, n_R0, n_X0), where:
 
                 - n_S0: Total number of susceptible to the infection
@@ -69,8 +74,30 @@ class SIRX(Model):
             SIRX: Reference to self
         """
         self._set_params(p, initial_conds)
+        self.name = 'sirx'
+        self.fit_input = 4 # By default, fit against containment compartment X
         return self
 
     @property
     def _model(self):
         return sirx
+
+    @property
+    def t_inf_eff(self):
+        "Returns effective infectious period"
+        return 1/sum(self.p[1:4])
+
+    @property
+    def r0_eff(self):
+        "Returns effective reproduction rate"
+        return self.t_inf_eff*self.p[0]
+
+    @property
+    def pcl(self):
+        "Returns public containment leverage"
+        return self.p[2]/(self.p[2]+self.p[3])
+
+    @property
+    def q_prob(self):
+        "Returns quarantine probability"
+        return (self.p[2]+self.p[3])/sum(self.p[1:4])
