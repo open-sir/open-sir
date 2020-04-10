@@ -48,6 +48,7 @@ class SIRX(Model):
     CSV_ROW = ["Days", "S", "I", "R", "X"]
     NUM_PARAMS = 5
     NUM_IC = 4
+    NAME = "SIRX"
 
     def set_params(self, p, initial_conds):
         """ Set model parameters.
@@ -78,9 +79,13 @@ class SIRX(Model):
             SIRX: Reference to self
         """
         self._set_params(p, initial_conds)
-        self.name = 'sirx'
         self.fit_input = 4 # By default, fit against containment compartment X
         return self
+
+    def _update_ic(self):
+        """Updates i_0 = (i_0/x_0)*x_0 in the context
+        of parameter fitting"""
+        self.w0[1] = self.p[4]*self.w0[3]
 
     @property
     def _model(self):

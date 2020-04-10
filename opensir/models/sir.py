@@ -34,6 +34,7 @@ class SIR(Model):
     CSV_ROW = ["Days", "S", "I", "R"]
     NUM_PARAMS = 2
     NUM_IC = 3
+    NAME = "SIR"
 
     def set_params(self, p, initial_conds):
         """ Set model parameters.
@@ -61,9 +62,13 @@ class SIR(Model):
         Returns:
             SIR: reference to self
         """
+
         self._set_params(p, initial_conds)
-        self.name = 'sir'
         self.fit_input = 2 # By default, fit against infected
+        return self
+
+    def _update_ic(self):
+        """Updates initial conditions if necessary"""
         return self
 
     @property
