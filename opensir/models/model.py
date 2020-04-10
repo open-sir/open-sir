@@ -67,7 +67,7 @@ class Model:
         self.w0 = initial_conds / self.pop
         return self
 
-    def export(self, f, delimiter=","):
+    def export(self, f, suppress_header=False, delimiter=","):
         """ Export the output of the model in CSV format.
 
         Note:
@@ -75,12 +75,19 @@ class Model:
 
         Args:
             f: file name or descriptor
+            suppress_header (boolean): Set to true to suppress the CSV header
             delimiter (str): delimiter of the CSV file
         """
         if self.sol is None:
             raise Exception("Missing call to solve()")
 
-        np.savetxt(f, self.sol, header=",".join(self.__class__.CSV_ROW), delimiter=",")
+        kwargs = {"delimiter": delimiter}
+
+        if not suppress_header:
+            kwargs["comments"] = ''
+            kwargs["header"] = ",".join(self.__class__.CSV_ROW)
+
+        np.savetxt(f, self.sol, **kwargs)
 
     def fetch(self):
         """ Fetch the data from the model.
