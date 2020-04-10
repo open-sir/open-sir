@@ -24,7 +24,7 @@ python_version = "3.7"
 allow_prereleases = true
 
 [scripts]
-start = "python open-sir.py"
+start = "python opensir-cli"
 lint = "pylint **/*.py"
 test = "pytest"
 doc = "sphinx-build -M html . _build"
