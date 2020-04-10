@@ -28,4 +28,4 @@ allow_prereleases = true
 start = "python opensir-cli"
 lint = "pylint **/*.py"
 test = "pytest"
-doc = "sphinx-build -M html . _build"
+doc = "sphinx-build -M html . _build -W"
