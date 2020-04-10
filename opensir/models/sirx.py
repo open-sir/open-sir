@@ -28,8 +28,12 @@ def sirx(w, t, p):
     """
     # unpack state variable
     s, i, r, x = w  # pylint: disable=W0612
-    # unpack parameter
-    alpha, beta, kappa_0, kappa, inf_over_test = p # pylint: disable=W0612
+    # unpack parameters
+    alpha = p[0]
+    beta = p[1]
+    kappa_0 = p[2]
+    kappa = p[3]# pylint: disable=W0612
+    # Define ODE system
     ds_dt = -alpha * s * i - kappa_0 * s
     di_dt = alpha * s * i - beta * i - kappa_0 * i - kappa * i
     dr_dt = beta * i + kappa_0 * s
