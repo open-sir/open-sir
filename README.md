@@ -42,6 +42,7 @@ case that no lockdown would be taking place.
 ### Command line interface
 
 Check that the installation was successful by calling the CLI:
+
 ```
 opensir-cli -p '[0.95,0.38]' -i '[341555,445,0]' -t 6 > data.csv
 ```
@@ -117,9 +118,10 @@ The documentation is placed under `_build/html`.
 
 ### Coding style tests
 
-This project uses [Pylint](https://www.pylint.org/) and [Black 19.10b0](https://black.readthedocs.io/en/stable/) to ensure consistent coding practices, and enforced by CircleCI. Non-default parameters are available in [.pylintrc](.pylintrc).
-
-
+This project uses [Pylint](https://www.pylint.org/) and [Black
+19.10b0](https://black.readthedocs.io/en/stable/) to ensure consistent coding
+practices, and enforced by CircleCI. Non-default parameters are available in
+[.pylintrc](.pylintrc).
 
 ## Authors
 
