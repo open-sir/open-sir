@@ -1,0 +1,26 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "jia200x",
+      "name": "José Alamos",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/1260616?v=4",
+      "profile": "https://github.com/jia200x",
+      "contributions": [
+        "code",
+        "doc",
+        "maintenance"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "open-sir",
+  "projectOwner": "open-sir",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
