@@ -78,7 +78,7 @@ class SIRX(Model):
         Returns:
             SIRX: Reference to self
         """
-        self._set_params(p, initial_conds)
+        super().set_params(p, initial_conds)
         self.fit_input = 4  # By default, fit against containment compartment X
         return self
 

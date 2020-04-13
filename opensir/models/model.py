@@ -54,7 +54,7 @@ class Model:
     def _model(self):
         raise Exception()
 
-    def _set_params(self, p, initial_conds):
+    def set_params(self, p, initial_conds):
         """ Set model parameters.
         Args:
             p (list): parameters of the model. The parameters units are 1/day,
