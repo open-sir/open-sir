@@ -86,7 +86,7 @@ class Model:
         kwargs = {"delimiter": delimiter}
 
         if not suppress_header:
-            kwargs["comments"] = ''
+            kwargs["comments"] = ""
             kwargs["header"] = ",".join(self.__class__.CSV_ROW)
 
         np.savetxt(f, self.sol, **kwargs)
@@ -154,13 +154,13 @@ class Model:
             params = np.array(self.p)
             params[fit_index] = par_fit
             self.p = params
-            self._update_ic() # Updates IC if necessary. For example, i_o/x_0 for SIR-X
+            self._update_ic()  # Updates IC if necessary. For example, i_o/x_0 for SIR-X
             sol_mod = call_solver(self._model, self.p, self.w0, t)
             return sol_mod[:, self.fit_input] * pop
 
         # Fit parameters
         # Ensure non-negativity and a loose upper bound
-        bounds = (np.zeros(len(fit_params0)), np.ones(len(fit_params0))*100)
+        bounds = (np.zeros(len(fit_params0)), np.ones(len(fit_params0)) * 100)
         # return p_new, pcov
         par_opt, pcov = curve_fit(
             f=function_handle, xdata=t_obs, ydata=n_i_obs, p0=fit_params0, bounds=bounds
