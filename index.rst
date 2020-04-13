@@ -32,8 +32,8 @@ from the `Robert Koch Institut
    :maxdepth: 2
    :caption: Contents:
 
-   getting-started
-   API
+   doc/getting-started
+   doc/API
 
 Indices and tables
 ==================
