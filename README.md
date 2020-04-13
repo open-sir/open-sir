@@ -1,4 +1,12 @@
+[mit]: https://img.shields.io/badge/License-MIT-blue.svg
+[circleci]: https://circleci.com/gh/open-sir/open-sir.svg?style=shield
+[black]: https://img.shields.io/badge/code%20style-black-000000.svg
+
 # open-sir
+
+[![License: MIT][mit]](https://opensource.org/licenses/MIT)
+[![open-sir][circleci]](https://circleci.com/gh/open-sir/open-sir)
+[![Code style: black][black]](https://github.com/psf/black)
 
 Open-SIR is an Open Source Python project for modelling pandemics and infectious diseases using Compartmental Models, such as the widely used [Susceptible-Infected-Removed (SIR) model](http://rocs.hu-berlin.de/corona/docs/forecast/model/#classic-sir-dynamics). 
 The current stage of the software is *Alpha*.
