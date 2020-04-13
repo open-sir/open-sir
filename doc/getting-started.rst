@@ -91,7 +91,7 @@ Python API
 
 You can replicate the predictions of the CLI with the following python script:
 
-.. code-block::
+.. code-block:: python
 
     from opensir.models import SIR
     my_sir = SIR() # Initialize an empty SIR model
