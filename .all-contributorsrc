@@ -26,6 +26,16 @@
         "doc",
         "tutorial"
       ]
+    },
+    {
+      "login": "sasalatart",
+      "name": "Sebastián Salata",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/5463900?v=4",
+      "profile": "https://github.com/sasalatart",
+      "contributions": [
+        "code",
+        "maintenance"
+      ]
     }
   ],
   "contributorsPerLine": 7,
