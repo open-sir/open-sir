@@ -9,7 +9,7 @@ WORKDIR /usr/src/app
 
 COPY Pipfile Pipfile.lock ./
 
-RUN apt-get update && pip3 install pipenv && pipenv install
+RUN apt-get update && apt-get install pandoc -y && pip3 install pipenv && pipenv install
 
 COPY . .
 
