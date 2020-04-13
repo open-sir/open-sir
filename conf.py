@@ -51,6 +51,7 @@ exclude_patterns = [
     "tutorials",
 ]
 
+master_doc = "index"
 
 # -- Options for HTML output -------------------------------------------------
 
