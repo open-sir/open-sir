@@ -1,0 +1,11 @@
+ipykernel
+numpy
+matplotlib
+pandas
+sphinxcontrib-bibtex
+sphinxcontrib-svg2pdfconverter
+ipywidgets
+sphinx-copybutton
+sphinx-gallery
+jupytext
+nbsphinx
