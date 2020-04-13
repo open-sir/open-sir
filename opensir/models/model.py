@@ -40,6 +40,16 @@ class Model:
         self.pcov = None
         self.fit_input = None
 
+    class InvalidParameterError(Exception):
+        """Raised when an initial parameter of a value is not correct"""
+
+        pass
+
+    class InvalidNumberOfParametersError(Exception):
+        """Raised when the number of initial parameters is not correct"""
+
+        pass
+
     @property
     def _model(self):
         raise Exception()
@@ -47,7 +57,8 @@ class Model:
     def _set_params(self, p, initial_conds):
         """ Set model parameters.
         Args:
-            p (list): parameters of the model. The parameters units are 1/day.
+            p (list): parameters of the model. The parameters units are 1/day,
+                      and should be >= 0.
             initial_conds (list): Initial conditions, in total number of individuals.
             For instance, S0 = n_S0/population, where n_S0 is the number of subjects
             who are susceptible to the disease.
@@ -59,11 +70,15 @@ class Model:
         num_params = self.__class__.NUM_PARAMS
         num_ic = self.__class__.NUM_IC
 
+        try:
+            for param in p:
+                assert param > 0
+        except:
+            raise self.InvalidParameterError()
+
         if len(p) != num_params or len(initial_conds) != num_ic:
-            raise Exception(
-                "Invalid number of parameters \
-                             or initial conditions"
-            )
+            raise self.InvalidNumberOfParametersError()
+
         self.p = p
         self.pop = np.sum(initial_conds)
         self.w0 = initial_conds / self.pop
