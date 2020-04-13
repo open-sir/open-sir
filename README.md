@@ -159,6 +159,9 @@ pipenv run start -i input_file.txt -t 6
 ### Build documentation
 
 Build the Sphinx documentation out of the open-sir Pipenv environment.
+Note: `pandoc` is required in order to build the documentation. See
+[installation notes](https://pandoc.org/installing.html)
+
 ```
 pipenv run doc
 ```
