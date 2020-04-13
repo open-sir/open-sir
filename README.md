@@ -191,7 +191,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
@@ -201,6 +201,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://github.com/jia200x"><img src="https://avatars3.githubusercontent.com/u/1260616?v=4" width="100px;" alt=""/><br /><sub><b>José Alamos</b></sub></a><br /><a href="https://github.com/open-sir/open-sir/commits?author=jia200x" title="Code">💻</a> <a href="https://github.com/open-sir/open-sir/commits?author=jia200x" title="Documentation">📖</a> <a href="#maintenance-jia200x" title="Maintenance">🚧</a></td>
     <td align="center"><a href="http://www.imperial.ac.uk/people/f.huerta-perez17"><img src="https://avatars3.githubusercontent.com/u/33637198?v=4" width="100px;" alt=""/><br /><sub><b>Felipe Huerta</b></sub></a><br /><a href="https://github.com/open-sir/open-sir/commits?author=felipehuerta17" title="Code">💻</a> <a href="https://github.com/open-sir/open-sir/commits?author=felipehuerta17" title="Documentation">📖</a> <a href="#tutorial-felipehuerta17" title="Tutorials">✅</a></td>
+    <td align="center"><a href="https://salatart.com"><img src="https://avatars1.githubusercontent.com/u/5463900?v=4" width="100px;" alt=""/><br /><sub><b>Sebastián Salata</b></sub></a><br /><a href="https://github.com/open-sir/open-sir/commits?author=sasalatart" title="Code">💻</a> <a href="#maintenance-sasalatart" title="Maintenance">🚧</a> <a href="#maintenance-sasalatart" title="Infra">🚇</a> </td>
   </tr>
 </table>
 
