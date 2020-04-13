@@ -71,7 +71,7 @@ jobs:
       - bootstrap
       - run:
           name: Build docs
-          command: pipenv run doc
+          command: sudo apt-get update && sudo apt-get install pandoc && pipenv run doc
 
   build:
     description: Build Docker image
