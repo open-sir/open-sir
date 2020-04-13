@@ -9,11 +9,13 @@ import pytest
 
 from opensir.models import SIR
 
-DEFAULT_PARAMS = [0.95, 0.38] # Default parameters from WHO
+DEFAULT_PARAMS = [0.95, 0.38]  # Default parameters from WHO
 EALING_IC = [341555, 445, 0]  # Ealing initial conditions
+
 
 class TestSir:
     """ Test class for the SIR model """
+
     @pytest.fixture
     def model(self):
         return SIR()
@@ -40,7 +42,8 @@ class TestSir:
         model.set_params(DEFAULT_PARAMS, initial_conds)
         model.solve(t, 2)
         n_inf_num = model.fetch()[-1, -1]
-        n_inf_analytical = n_inf_num * np.exp((DEFAULT_PARAMS[1] -
-                                               DEFAULT_PARAMS[0]) * t)
+        n_inf_analytical = n_inf_num * np.exp(
+            (DEFAULT_PARAMS[1] - DEFAULT_PARAMS[0]) * t
+        )
         # Asert over the difference < 1e-4
         assert abs(n_inf_analytical - n_inf_num) < 1e-4
