@@ -56,6 +56,17 @@
         "code",
         "maintenance"
       ]
+    },
+    {
+      "login": "gwenzel",
+      "name": "gwenzel",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/20341243?v=4",
+      "profile": "https://github.com/gwenzel",
+      "contributions": [
+        "ideas",
+        "userTesting",
+        "example"
+      ]
     }
   ],
   "contributorsPerLine": 7,
