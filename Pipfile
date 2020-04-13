@@ -18,6 +18,7 @@ sphinx = "*"
 sphinx-rtd-theme = "*"
 toml = "*"
 pandas = "*"
+nbsphinx = "*"
 
 [requires]
 python_version = "3.7"
