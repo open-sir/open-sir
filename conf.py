@@ -48,6 +48,7 @@ exclude_patterns = [
     ".DS_Store",
     ".ipynb_checkpoints",
     "doc/build",
+    "tutorials",
 ]
 
 
