@@ -64,7 +64,7 @@ class SIR(Model):
         """
 
         self._set_params(p, initial_conds)
-        self.fit_input = 2 # By default, fit against infected
+        self.fit_input = 2  # By default, fit against infected
         return self
 
     def _update_ic(self):

@@ -8,29 +8,27 @@ from setuptools import setup
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+
 setup(
-    name = "opensir",
-    version = "1.0.0",
-    author = "Open-SIR community",
-    author_email = "open.sir.project@gmail.com",
-    description = ("Open-SIR is an Open Source Python project for modelling"
-                   "pandemics and infectious diseases using Compartmental"
-                   "Models"),
-    license = "MIT",
-    keywords = "SIR SIRX pandemics modelling",
-    url = "http://github.com/open-sir/open-sir",
-    packages=['opensir', 'opensir.models'],
+    name="opensir",
+    version="1.0.0",
+    author="Open-SIR community",
+    author_email="open.sir.project@gmail.com",
+    description=(
+        "Open-SIR is an Open Source Python project for modelling"
+        "pandemics and infectious diseases using Compartmental"
+        "Models"
+    ),
+    license="MIT",
+    keywords="SIR SIRX pandemics modelling",
+    url="http://github.com/open-sir/open-sir",
+    packages=["opensir", "opensir.models"],
     scripts=["opensir-cli"],
-    install_requires=[
-          'scipy',
-          'sklearn',
-          'numpy',
-          'toml',
-    ],
-    long_description=read('README.md'),
+    install_requires=["scipy", "sklearn", "numpy", "toml",],
+    long_description=read("README.md"),
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
         "License :: OSI Approved :: BSD License",
     ],
-    )
+)

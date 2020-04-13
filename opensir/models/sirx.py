@@ -32,7 +32,7 @@ def sirx(w, t, p):
     alpha = p[0]
     beta = p[1]
     kappa_0 = p[2]
-    kappa = p[3]# pylint: disable=W0612
+    kappa = p[3]  # pylint: disable=W0612
     # Define ODE system
     ds_dt = -alpha * s * i - kappa_0 * s
     di_dt = alpha * s * i - beta * i - kappa_0 * i - kappa * i
@@ -79,13 +79,13 @@ class SIRX(Model):
             SIRX: Reference to self
         """
         self._set_params(p, initial_conds)
-        self.fit_input = 4 # By default, fit against containment compartment X
+        self.fit_input = 4  # By default, fit against containment compartment X
         return self
 
     def _update_ic(self):
         """Updates i_0 = (i_0/x_0)*x_0 in the context
         of parameter fitting"""
-        self.w0[1] = self.p[4]*self.w0[3]
+        self.w0[1] = self.p[4] * self.w0[3]
 
     @property
     def _model(self):
@@ -94,19 +94,19 @@ class SIRX(Model):
     @property
     def t_inf_eff(self):
         "Returns effective infectious period"
-        return 1/sum(self.p[1:4])
+        return 1 / sum(self.p[1:4])
 
     @property
     def r0_eff(self):
         "Returns effective reproduction rate"
-        return self.t_inf_eff*self.p[0]
+        return self.t_inf_eff * self.p[0]
 
     @property
     def pcl(self):
         "Returns public containment leverage"
-        return self.p[2]/(self.p[2]+self.p[3])
+        return self.p[2] / (self.p[2] + self.p[3])
 
     @property
     def q_prob(self):
         "Returns quarantine probability"
-        return (self.p[2]+self.p[3])/sum(self.p[1:4])
+        return (self.p[2] + self.p[3]) / sum(self.p[1:4])

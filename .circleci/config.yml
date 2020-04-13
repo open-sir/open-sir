@@ -46,6 +46,15 @@ jobs:
           name: Run linter
           command: pipenv run pylint **/*.py
 
+  black_check:
+    description: Check code formatting with Black
+    executor: py-executor
+    steps:
+      - bootstrap
+      - run:
+          name: Run Black check
+          command: pipenv run black_check
+
   test:
     description: Run tests
     executor: py-executor
@@ -80,6 +89,9 @@ workflows:
       - lint:
           requires:
             - bootstrap
+      - black_check:
+          requires:
+            - bootstrap
       - test:
           requires:
             - bootstrap
@@ -89,6 +101,7 @@ workflows:
       - build:
           requires:
             - lint
+            - black_check
             - test
             - docs
           filters:
@@ -98,6 +111,7 @@ workflows:
       - docker/publish:
           requires:
             - lint
+            - black_check
             - test
             - docs
           filters:
