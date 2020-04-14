@@ -45,9 +45,8 @@ templates_path = ["_templates"]
 exclude_patterns = [
     "Thumbs.db",
     ".DS_Store",
-    ".ipynb_checkpoints",
+    "**.ipynb_checkpoints",
     "build",
-    "tutorials",
 ]
 
 master_doc = "index"

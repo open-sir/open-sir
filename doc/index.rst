@@ -34,8 +34,8 @@ from the `Robert Koch Institut
 
    getting-started
    API
-   SIR
-   SIR-X
+   tutorials/SIR
+   tutorials/SIR-X
 
 Indices and tables
 ==================
