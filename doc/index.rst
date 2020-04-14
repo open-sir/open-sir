@@ -32,9 +32,9 @@ from the `Robert Koch Institut
    :maxdepth: 2
    :caption: Contents:
 
-   doc/getting-started
-   doc/API
-   doc/SIR
+   getting-started
+   API
+   SIR
 
 Indices and tables
 ==================
