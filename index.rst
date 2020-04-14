@@ -34,7 +34,7 @@ from the `Robert Koch Institut
 
    doc/getting-started
    doc/API
-   SIR
+   doc/SIR
 
 Indices and tables
 ==================
