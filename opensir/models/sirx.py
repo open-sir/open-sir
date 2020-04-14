@@ -93,20 +93,47 @@ class SIRX(Model):
 
     @property
     def t_inf_eff(self):
-        "Returns effective infectious period"
+        """Returns effective infectious period
+        
+        Returns:
+            float:
+            .. math::
+                T_{I,eff} = (\\beta + \\kappa + \\kappa_0)^{-1} 
+        """
         return 1 / sum(self.p[1:4])
 
     @property
     def r0_eff(self):
-        "Returns effective reproduction rate"
+        """Returns effective reproduction rate :math:`R_{0,eff}`
+        
+        Returns:
+            float:
+            .. math::
+                R_{0,eff} = \\alpha T_{I,eff}
+        
+        """
+
         return self.t_inf_eff * self.p[0]
 
     @property
     def pcl(self):
-        "Returns public containment leverage"
+        """Returns public containment leverage :math:`P`
+        
+        Returns:
+            float:
+            .. math::
+                P = \\frac{\\kappa_0}{\\kappa_0 + \\kappa}
+        
+        """
         return self.p[2] / (self.p[2] + self.p[3])
 
     @property
     def q_prob(self):
-        "Returns quarantine probability"
+        """ Returns quarantine probability :math:`Q`
+        
+        Returns:
+            float:
+            .. math::
+                Q = \\frac{\\kappa_0 + \\kappa}{\\beta + \\kappa_0 + \\kappa}
+        """
         return (self.p[2] + self.p[3]) / sum(self.p[1:4])

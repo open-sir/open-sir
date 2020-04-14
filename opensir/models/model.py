@@ -137,19 +137,26 @@ class Model:
         """ Returns reproduction number
 
         Returns:
-            float: r0 (alpha/beta)
+            float:
+            .. math::
+                R_0 = \\alpha/\\beta
         """
         return self.p[0] / self.p[1]
 
     def fit(self, t_obs, n_i_obs, population, fit_index=None):
         """ Use the Levenberg-Marquardt algorithm to fit
-        the parameter alpha, as beta is assumed constant
+        model parameters consistent with True entries in the fit_index list.
 
         Args:
             t_obs (np.array): Vector of days corresponding to the observations
-            of number of infected people
+                of number of infected people
             n_i_obs (np.array): Vector of number of infected people
-            population: Size of the objective population
+            population (integer): Size of the objective population
+            fit_index (list of booleans , optional): this list must be
+                of the same size of the number of  parameters of the model.
+                The parameter p[i] will be fitted if fit_index[i] = True. Otherwise,
+                the parameter will be fixed. By default, fit will only fit the first
+                parameter of p, p[0].
 
         Returns:
             Model: Reference to self
