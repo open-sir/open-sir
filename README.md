@@ -2,6 +2,19 @@
 [circleci]: https://circleci.com/gh/open-sir/open-sir.svg?style=shield
 [black]: https://img.shields.io/badge/code%20style-black-000000.svg
 [rtd]: https://readthedocs.org/projects/open-sir/badge/?version=latest
+[sir]: http://rocs.hu-berlin.de/corona/docs/forecast/model/#classic-sir-dynamics
+[sirx]: https://science.sciencemag.org/content/early/2020/04/07/science.abb4557.full
+[rki-model]: http://rocs.hu-berlin.de/corona/docs/forecast/model/#sir-x-dynamics-outbreaks-with-temporally-increasing-interventions
+[doc]: https://open-sir.readthedocs.io/
+[gs]: https://open-sir.readthedocs.io/en/latest/doc/getting-started.html
+[riot]: https://github.com/RIOT-OS
+[imperial]: https://github.com/ImperialCollegeLondon
+[alamos]: https://github.com/jia200x
+[huerta]: https://github.com/felipehuerta17
+[phd-huerta]: https://www.imperial.ac.uk/people/f.huerta-perez17
+[salata]: https://github.com/sasalatart
+[contributors]: https://github.com/open-sir/open-sir/contributors
+[rki]: https://www.rki.de/EN/Home/homepage_node.html
 
 # open-sir
 
@@ -13,8 +26,7 @@
 
 Open-SIR is an Open Source Python project for modelling pandemics and
 infectious diseases using Compartmental Models, such as the widely used
-[Susceptible-Infected-Removed (SIR)
-model](http://rocs.hu-berlin.de/corona/docs/forecast/model/#classic-sir-dynamics).
+[Susceptible-Infected-Removed (SIR) model][sir].
 The current stage of the software is *Alpha*.
 
 ## Features
@@ -24,13 +36,11 @@ The current stage of the software is *Alpha*.
 - CLI for interfacing with non Python environments (Bash, Node.JS, Matlab, etc).
 
 So far, Open-SIR provides an implementation of the SIR model and the novel
-[SIR-X model, developed by Maier and
-Dirk](https://science.sciencemag.org/content/early/2020/04/07/science.abb4557.full)
-from the [Robert Koch
-Institut](http://rocs.hu-berlin.de/corona/docs/forecast/model/#sir-x-dynamics-outbreaks-with-temporally-increasing-interventions).
+[SIR-X model developed by Maier and Dirk][sirx] from the [Robert Koch
+Institut][rki-model].
 
 For the API reference and examples of usage, please check the
-[online documentation](https://open-sir.readthedocs.io/).
+[online documentation][doc].
 
 ### Getting started
 
@@ -42,22 +52,20 @@ cd open-sir
 pip install .
 ```
 
-Please follow [Getting
-Started](https://open-sir.readthedocs.io/en/latest/doc/getting-started.html) to
-get your hands on Open-SIR.
+Please follow [Getting Started][gs] to get your hands on Open-SIR.
 
 ## Authors
 
-* **[José Álamos](https://github.com/jia200x)** -
-  [RIOT-OS](https://github.com/RIOT-OS)
-* **[Felipe Huerta](https://github.com/felipehuerta17)** - [PhD
-  Student](https://www.imperial.ac.uk/people/f.huerta-perez17) at [Imperial
-College London](https://github.com/ImperialCollegeLondon)
-* **[Sebastián Salata](https://github.com/sasalatart)** - Software Engineer -
+* **[José Álamos][alamos]** -
+  [RIOT-OS][riot]
+* **[Felipe Huerta][huerta]** - [PhD
+  Student][phd-huerta] at [Imperial
+College London][imperial]
+* **[Sebastián Salata][salata]** - Software Engineer -
   Full Stack
 
 See also the list of
-[contributors](https://github.com/open-sir/open-sir/contributors) who
+[contributors][contributors] who
 participated in this project.
 
 ## License
@@ -67,7 +75,7 @@ file for details
 
 ## Acknowledgements
 
-* [Robert Koch Institut](https://www.rki.de/EN/Home/homepage_node.html) for the
+* [Robert Koch Institut][rki] for the
   clear explanation of SIR and SIR-X models.
 
 ## Contributors ✨
