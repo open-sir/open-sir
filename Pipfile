@@ -30,6 +30,6 @@ allow_prereleases = true
 start = "python opensir-cli"
 lint = "pylint **/*.py"
 test = "pytest"
-doc = "sphinx-build -M html . doc/build -W"
+doc = "sphinx-build -M html doc doc/build -W"
 black = "black ."
 black_check = "black --check ."
