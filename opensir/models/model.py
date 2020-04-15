@@ -57,18 +57,22 @@ class Model:
     def set_params(self, p, initial_conds):
         """ Set model parameters.
         Args:
-            p (list): parameters of the model. The parameters units are 1/day,
+            p (dict or list): parameters of the model. The parameters units are 1/day,
                       and should be >= 0.
-            initial_conds (list): Initial conditions, in total number of individuals.
+            initial_conds (dict or list): Initial conditions, in total number of individuals.
             For instance, S0 = n_S0/population, where n_S0 is the number of subjects
             who are susceptible to the disease.
+
+        Note:
+            Support for list of params and initial conditions will be deprecated
+            soon.
 
         Returns:
             Model: Reference to self
         """
 
-        params = self.__class__.PARAMS
-        ic = self.__class__.IC
+        params = self.PARAMS
+        ic = self.IC
 
         if type(p) is dict:
             p = [p[d] for d in params if d in p.keys()]
@@ -111,7 +115,7 @@ class Model:
 
         if not suppress_header:
             kwargs["comments"] = ""
-            kwargs["header"] = ",".join(self.__class__.CSV_ROW)
+            kwargs["header"] = ",".join(self.CSV_ROW)
 
         np.savetxt(f, self.sol, **kwargs)
 
