@@ -11,7 +11,10 @@
 [![Documentation Status][rtd]](https://open-sir.readthedocs.io/en/latest)
 
 
-Open-SIR is an Open Source Python project for modelling pandemics and infectious diseases using Compartmental Models, such as the widely used [Susceptible-Infected-Removed (SIR) model](http://rocs.hu-berlin.de/corona/docs/forecast/model/#classic-sir-dynamics). 
+Open-SIR is an Open Source Python project for modelling pandemics and
+infectious diseases using Compartmental Models, such as the widely used
+[Susceptible-Infected-Removed (SIR)
+model](http://rocs.hu-berlin.de/corona/docs/forecast/model/#classic-sir-dynamics).
 The current stage of the software is *Alpha*.
 
 ## Features
@@ -20,7 +23,11 @@ The current stage of the software is *Alpha*.
 - Calculation of confidence intervals
 - CLI for interfacing with non Python environments (Bash, Node.JS, Matlab, etc).
 
-So far, Open-SIR provides an implementation of the SIR model and the novel [SIR-X model, developed by Maier and Dirk](https://science.sciencemag.org/content/early/2020/04/07/science.abb4557.full) from the [Robert Koch Institut](http://rocs.hu-berlin.de/corona/docs/forecast/model/#sir-x-dynamics-outbreaks-with-temporally-increasing-interventions).
+So far, Open-SIR provides an implementation of the SIR model and the novel
+[SIR-X model, developed by Maier and
+Dirk](https://science.sciencemag.org/content/early/2020/04/07/science.abb4557.full)
+from the [Robert Koch
+Institut](http://rocs.hu-berlin.de/corona/docs/forecast/model/#sir-x-dynamics-outbreaks-with-temporally-increasing-interventions).
 
 For the API reference and examples of usage, please check the
 [online documentation](https://open-sir.readthedocs.io/).
@@ -49,9 +56,10 @@ pip uninstall opensir
 
 ## Usage example
 
-You can use Open-SIR to create a 6 days prediction of the number of susceptible (S), infected (I) and removed (R) population. 
-The initial conditions '-i' represent Ealing data as of 04/04/2020. The parameters '-p' provide a prediction in the hypothetical 
-case that no lockdown would be taking place.
+You can use Open-SIR to create a 6 days prediction of the number of susceptible
+(S), infected (I) and removed (R) population.  The initial conditions '-i'
+represent Ealing data as of 04/04/2020. The parameters '-p' provide a
+prediction in the hypothetical case that no lockdown would be taking place.
 
 ### Command line interface
 
@@ -111,7 +119,8 @@ cat input_file | opensir-cli --model sir --time 6
 
 The output of opensir-cli is a .csv file with the output of the model.
 
-*Note: On Windows, the CLI must be run from Powershell or any bash shell such as [Git BASH](https://gitforwindows.org/)*
+*Note: On Windows, the CLI must be run from Powershell or any bash shell such
+as [Git BASH](https://gitforwindows.org/)*
 
 ### Python API
 
@@ -190,19 +199,27 @@ practices, and enforced by CircleCI. Non-default parameters are available in
 
 ## Authors
 
-* **[José Álamos](https://github.com/jia200x)** - [RIOT-OS](https://github.com/RIOT-OS)
-* **[Felipe Huerta](https://github.com/felipehuerta17)** - [PhD Student](https://www.imperial.ac.uk/people/f.huerta-perez17) at [Imperial College London](https://github.com/ImperialCollegeLondon)
-* **[Sebastián Salata](https://github.com/sasalatart)** - Software Engineer - Full Stack
+* **[José Álamos](https://github.com/jia200x)** -
+  [RIOT-OS](https://github.com/RIOT-OS)
+* **[Felipe Huerta](https://github.com/felipehuerta17)** - [PhD
+  Student](https://www.imperial.ac.uk/people/f.huerta-perez17) at [Imperial
+College London](https://github.com/ImperialCollegeLondon)
+* **[Sebastián Salata](https://github.com/sasalatart)** - Software Engineer -
+  Full Stack
 
-See also the list of [contributors](https://github.com/open-sir/open-sir/contributors) who participated in this project.
+See also the list of
+[contributors](https://github.com/open-sir/open-sir/contributors) who
+participated in this project.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE)
+file for details
 
 ## Acknowledgements
 
-* [Robert Koch Institut](https://www.rki.de/EN/Home/homepage_node.html) for the clear explanation of SIR and SIR-X models.
+* [Robert Koch Institut](https://www.rki.de/EN/Home/homepage_node.html) for the
+  clear explanation of SIR and SIR-X models.
 
 ## Contributors ✨
 
