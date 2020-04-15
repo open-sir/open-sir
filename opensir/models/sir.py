@@ -32,16 +32,17 @@ class SIR(Model):
     """ SIR model definition """
 
     CSV_ROW = ["Days", "S", "I", "R"]
-    NUM_PARAMS = 2
-    NUM_IC = 3
+    PARAMS = ["alpha", "beta"]
+    IC = ["n_S0", "n_I0", "n_R0"]
     NAME = "SIR"
 
     def set_params(self, p, initial_conds):
         """ Set model parameters.
 
         Args:
-            p (list): parameters of the model [alpha, beta]. All these
-                 values should be in 1/day units.
+            p (dict or array): parameters of the model (alpha, beta). All these
+                 values should be in 1/day units. If a list is used, the order
+                 of parameters is [alpha, beta].
             initial_conds (list): Initial conditions (n_S0, n_I0, n_R0), where:
 
                 - n_S0: Total number of susceptible to the infection
@@ -58,6 +59,9 @@ class SIR(Model):
 
                 which is consistent with the mathematical description
                 of the SIR model.
+
+                If a list is used, the order of initial conditions is
+                [n_S0, n_I0, n_R0]
 
         Returns:
             SIR: reference to self

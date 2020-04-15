@@ -28,8 +28,8 @@ class Model:
     """ Base model definition """
 
     CSV_ROW = []
-    NUM_PARAMS = 4
-    NUM_IC = 4
+    PARAMS = []
+    IC = []
     NAME = None
 
     def __init__(self):
@@ -67,8 +67,17 @@ class Model:
             Model: Reference to self
         """
 
-        num_params = self.__class__.NUM_PARAMS
-        num_ic = self.__class__.NUM_IC
+        params = self.__class__.PARAMS
+        ic = self.__class__.IC
+
+        if type(p) is dict:
+            p = [p[d] for d in params if d in p.keys()]
+
+        if type(initial_conds) is dict:
+            initial_conds = [initial_conds[d] for d in ic if d in initial_conds.keys()]
+
+        num_params = len(params)
+        num_ic = len(ic)
 
         try:
             for param in p:
