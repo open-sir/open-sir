@@ -46,16 +46,17 @@ class SIRX(Model):
     """ SIRX model definition """
 
     CSV_ROW = ["Days", "S", "I", "R", "X"]
-    NUM_PARAMS = 5
-    NUM_IC = 4
+    PARAMS = ["alpha", "beta", "kappa_0", "kappa", "inf_over_test"]
+    IC = ["n_S0", "n_I0", "n_R0", "n_X0"]
     NAME = "SIRX"
 
     def set_params(self, p, initial_conds):
         """ Set model parameters.
 
         Args:
-            p (list): parameters of the model [alpha, beta, kappa_0, kappa, inf_over_test].
-                 All these values should be in 1/day units.
+            p (list): parameters of the model (alpha, beta, kappa_0, kappa, inf_over_test).
+                 All these values should be in 1/day units. If a list is used,
+                 the order of parameters is [alpha, beta, kappa_0, kappa, inf_over_test]
             initial_conds (list): Initial conditions (n_S0, n_I0, n_R0, n_X0), where:
 
                 - n_S0: Total number of susceptible to the infection
@@ -74,6 +75,9 @@ class SIRX(Model):
 
                 which is consistent with the mathematical description
                 of the SIR model.
+
+                If a list is used, the order of initial conditions is
+                [n_S0, n_I0, n_R0, n_X0]
 
         Returns:
             SIRX: Reference to self
