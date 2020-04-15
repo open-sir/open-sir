@@ -47,3 +47,41 @@ class TestSir:
         )
         # Asert over the difference < 1e-4
         assert abs(n_inf_analytical - n_inf_num) < 1e-4
+
+
+class TestUnittestSir:
+    """ Unittest class for the SIR model """
+
+    @pytest.fixture
+    def model(self):
+        return SIR()
+
+    def test_dict_and_list_params_produce_same_results(self, model):
+        t = 6
+        model.set_params(DEFAULT_PARAMS, EALING_IC)
+        model.solve(t, t + 1)
+        m_list = model.fetch()
+
+        d_params = {"alpha": DEFAULT_PARAMS[0], "beta": DEFAULT_PARAMS[1]}
+        d_ic = {"n_S0": EALING_IC[0], "n_I0": EALING_IC[1], "n_R0": EALING_IC[2]}
+
+        model.set_params(d_params, d_ic)
+        model.solve(t, t + 1)
+        m_dict = model.fetch()
+
+        assert np.array_equal(m_list, m_dict)
+
+    def test_missing_dict_param_should_raise(self, model):
+        d_params = {"alpha": DEFAULT_PARAMS[0], "beta": DEFAULT_PARAMS[1]}
+        d_ic = {"n_S0": EALING_IC[0], "n_I0": EALING_IC[1], "n_R0": EALING_IC[2]}
+
+        bad_params = {"kappa": DEFAULT_PARAMS[0], "beta": DEFAULT_PARAMS[1]}
+        bad_ic = {"n_X0": EALING_IC[0], "n_I0": EALING_IC[1], "n_R0": EALING_IC[2]}
+
+        model.set_params(d_params, d_ic)
+
+        with pytest.raises(SIR.InvalidNumberOfParametersError):
+            model.set_params(d_params, bad_ic)
+
+        with pytest.raises(SIR.InvalidNumberOfParametersError):
+            model.set_params(bad_params, d_ic)
