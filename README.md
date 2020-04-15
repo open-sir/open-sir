@@ -15,7 +15,7 @@
 [salata]: https://github.com/sasalatart
 [contributors]: https://github.com/open-sir/open-sir/contributors
 [rki]: https://www.rki.de/EN/Home/homepage_node.html
-[pic]: https://user-images.githubusercontent.com/33637198/79386291-d4627900-7f61-11ea-9cf8-b0ae7f16a4e5.png
+[pic]: https://user-images.githubusercontent.com/33637198/79390418-8f414580-7f67-11ea-880d-9d30523ddbe3.png
 
 # open-sir
 
@@ -23,8 +23,6 @@
 [![open-sir][circleci]](https://circleci.com/gh/open-sir/open-sir)
 [![Code style: black][black]](https://github.com/psf/black)
 [![Documentation Status][rtd]](https://open-sir.readthedocs.io/en/latest)
-
-![Open-SIR][pic]
 
 Open-SIR is an Open Source Python project for modelling pandemics and
 infectious diseases using Compartmental Models, such as the widely used
@@ -41,6 +39,12 @@ The current stage of the software is *Alpha*.
 So far, Open-SIR provides an implementation of the SIR model and the novel
 [SIR-X model developed by Maier and Dirk][sirx] from the [Robert Koch
 Institut][rki-model].
+
+
+The figure below illustrates how Open-SIR can be used to fit
+compartmental models to real data of coronavirus SARS-CoV-2 reported cases in a  population of interest.
+
+<img src="https://user-images.githubusercontent.com/33637198/79390418-8f414580-7f67-11ea-880d-9d30523ddbe3.png" width="480px;" height="400px;">
 
 For the API reference and examples of usage, please check the
 [online documentation][doc].
