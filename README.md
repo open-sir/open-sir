@@ -32,6 +32,20 @@ Institut](http://rocs.hu-berlin.de/corona/docs/forecast/model/#sir-x-dynamics-ou
 For the API reference and examples of usage, please check the
 [online documentation](https://open-sir.readthedocs.io/).
 
+### Getting started
+
+Welcome to Open-Sir! Install Open-SIR using `pip`
+
+```
+git clone https://github.com/open-sir/open-sir.git
+cd open-sir
+pip install .
+```
+
+Please follow [Getting
+Started](https://open-sir.readthedocs.io/en/latest/doc/getting-started.html) to
+get your hands on Open-SIR.
+
 ### Dependencies
 
 * Python >= 3.2
