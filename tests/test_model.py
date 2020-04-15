@@ -34,3 +34,32 @@ class TestModel:
 
         with pytest.raises(Model.InvalidNumberOfParametersError):
             model.set_params(p, [])
+
+    def test_set_params_with_invalid_dict_params_should_fail(self, model):
+        """Tests that calling set_params with invalid number of dict parameters
+           and initial conditions raises an exception.
+        """
+        model.PARAMS = ["alpha", "beta"]
+        model.IC = ["n_S0", "n_I0", "n_R0"]
+
+        p = {"alpha": -1, "beta": 2}
+        ic = {"n_S0": -1, "n_I0": 2, "n_R0": 3}
+
+        with pytest.raises(Model.InvalidParameterError):
+            model.set_params(p, ic)
+
+    def test_set_params_with_invalid_number_dict_params_should_fail(self, model):
+        """Tests that calling set_params with invalid number of dict parameters
+           and initial conditions raises an exception.
+        """
+        model.PARAMS = ["alpha", "beta"]
+        model.IC = ["n_S0", "n_I0", "n_R0"]
+
+        p = {"alpha": 1, "beta": 2}
+        ic = {"n_S0": 1, "n_I0": 2, "n_R0": 3}
+
+        with pytest.raises(Model.InvalidNumberOfParametersError):
+            model.set_params({}, ic)
+
+        with pytest.raises(Model.InvalidNumberOfParametersError):
+            model.set_params(p, {})
