@@ -24,8 +24,6 @@
 [![Code style: black][black]](https://github.com/psf/black)
 [![Documentation Status][rtd]](https://open-sir.readthedocs.io/en/latest)
 
-![Open-SIR][pic]
-
 Open-SIR is an Open Source Python project for modelling pandemics and
 infectious diseases using Compartmental Models, such as the widely used
 [Susceptible-Infected-Removed (SIR) model][sir].
