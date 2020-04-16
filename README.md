@@ -36,12 +36,21 @@ The current stage of the software is *Alpha*.
 - Calculation of confidence intervals
 - CLI for interfacing with non Python environments (Bash, Node.JS, Matlab, etc).
 
+
+For the API reference and examples of usage, please check the
+[online documentation][doc].
+
 So far, Open-SIR provides an implementation of the SIR model and the novel
 [SIR-X model developed by Maier and Dirk][sirx] from the [Robert Koch
 Institut][rki-model].
 
-For the API reference and examples of usage, please check the
-[online documentation][doc].
+The figure below illustrates how Open-SIR can be used to fit
+compartmental models to real data of coronavirus SARS-CoV-2 reported cases in a  population of interest.
+
+<img src="https://user-images.githubusercontent.com/33637198/79390418-8f414580-7f67-11ea-880d-9d30523ddbe3.png" width="480px;" height="400px;">
+
+This is an example of using Open-SIR to fit the model developed by Maier and Brockmann, 2020, *Containment explains subexponential growth in confirmed cases of recent COVID-19 in Mainland China*, Science, DOI: 10.1126/science.abb4557 to Guangdong data.
+
 
 ### Getting started
 
