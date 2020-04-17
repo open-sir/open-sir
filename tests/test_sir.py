@@ -7,7 +7,8 @@
 import numpy as np
 import pytest
 
-from opensir.models import SIR
+from opensir.models import Model, SIR
+from opensir.models.sir import SIR_NUM_PARAMS, SIR_NUM_IC
 
 DEFAULT_PARAMS = [0.95, 0.38]  # Default parameters from WHO
 EALING_IC = [341555, 445, 0]  # Ealing initial conditions
@@ -85,3 +86,77 @@ class TestUnittestSir:
 
         with pytest.raises(SIR.InvalidNumberOfParametersError):
             model.set_params(bad_params, d_ic)
+
+    def test_invalid_num_parameters_should_raise(self, model):
+        """Tests that initializing the model with invalid params raises an
+            exception.
+        """
+        p = [1] * (SIR_NUM_PARAMS - 1)
+
+        with pytest.raises(Model.InvalidNumberOfParametersError):
+            model.set_parameters(p)
+
+    def test_invalid_parameters_should_raise(self, model):
+        """Tests that initializing the model with invalid number of parameters
+           or initial conditions raises an exception.
+        """
+        p = [-1] * SIR_NUM_PARAMS
+
+        with pytest.raises(Model.InvalidParameterError):
+            model.set_parameters(p)
+
+    def test_set_parameters(self, model):
+        res = model.set_parameters(DEFAULT_PARAMS)
+        assert np.array_equal(DEFAULT_PARAMS, model.p)
+        assert isinstance(res, SIR)
+
+        model.p = None
+        res = model.set_parameters(alpha=DEFAULT_PARAMS[0], beta=DEFAULT_PARAMS[1])
+        assert np.array_equal(DEFAULT_PARAMS, model.p)
+        assert isinstance(res, SIR)
+
+    def test_invalid_num_ic_should_raise(self, model):
+        """Tests that initializing the model with invalid params raises an
+            exception.
+        """
+        ic = [1] * (SIR_NUM_IC - 1)
+
+        with pytest.raises(Model.InvalidNumberOfParametersError):
+            model.set_initial_conds(ic)
+
+    def test_invalid_ic_should_raise(self, model):
+        """Tests that initializing the model with invalid number of parameters
+           or initial conditions raises an exception.
+        """
+        ic = [-1] * SIR_NUM_IC
+
+        with pytest.raises(Model.InvalidParameterError):
+            model.set_initial_conds(ic)
+
+    def test_set_ic(self, model):
+        res = model.set_initial_conds(EALING_IC)
+        assert np.sum(EALING_IC) == model.pop
+        assert np.array_equal(EALING_IC / np.sum(EALING_IC), model.w0)
+        assert isinstance(res, SIR)
+
+        model.pop = None
+        model.w0 = None
+
+        res = model.set_initial_conds(
+            n_S0=EALING_IC[0], n_I0=EALING_IC[1], n_R0=EALING_IC[2]
+        )
+
+        assert np.sum(EALING_IC) == model.pop
+        assert np.array_equal(EALING_IC / np.sum(EALING_IC), model.w0)
+        assert isinstance(res, SIR)
+
+    def test_params_setters_are_equal(self, model):
+        model.set_params(DEFAULT_PARAMS, EALING_IC)
+
+        new_model = SIR()
+        new_model.set_parameters(DEFAULT_PARAMS)
+        new_model.set_initial_conds(EALING_IC)
+
+        assert np.array_equal(model.p, new_model.p)
+        assert model.pop == new_model.pop
+        assert np.array_equal(model.w0, new_model.w0)
