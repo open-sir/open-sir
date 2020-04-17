@@ -1,0 +1,16 @@
+name: WIP blocker
+
+on:
+  pull_request:
+    branches: [master, develop]
+    types: [labeled, unlabeled]
+
+jobs:
+  check_wip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Block merging if PR is labeled/titled with "WIP" or "blocked"
+        uses: ParanoidBeing/action-wip-blocker@v0.1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BLOCK_LIST: "WIP|blocked"
