@@ -65,7 +65,7 @@ class Model:
 
         Note:
             Support for list of params and initial conditions will be deprecated
-            soon.
+            in future releases.
 
         Returns:
             Model: Reference to self
