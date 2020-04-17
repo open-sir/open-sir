@@ -1,5 +1,9 @@
 """Contains class and ODE system of SIR-X model"""
-from .model import Model
+from .model import Model, _validate_params
+import numpy as np
+
+SIRX_NUM_PARAMS = 5
+SIRX_NUM_IC = 4
 
 
 def sirx(w, t, p):
@@ -50,6 +54,42 @@ class SIRX(Model):
     IC = ["n_S0", "n_I0", "n_R0", "n_X0"]
     NAME = "SIRX"
 
+    def set_parameters(
+        self,
+        array=None,
+        alpha=None,
+        beta=None,
+        kappa_0=None,
+        kappa=None,
+        inf_over_test=None,
+    ):
+        """ Set SIR-X parameters
+
+        Args:
+            array (list): list of parameters of the model
+                ([alpha, beta, kappa_0, kappa, inf_over_test])
+                If set, all other arguments are ignored.
+                All these values should be in 1/day units.
+            alpha (float): Value of `alpha` in 1/day unit.
+            beta (float): Value of `beta` in 1/day unit.
+            kappa_0 (float): Value of `kappa_0` in 1/day unit.
+            kappa (float): Value of `kappa` in 1/day unit.
+            inf_over_test (float): Value of infected/tested
+
+        Returns:
+            SIRX: Reference to self
+        """
+        self.fit_input = 4  # By default, fit against containment compartment X
+        if array:
+            arr = np.array(array, dtype=float)
+        else:
+            arr = np.array([alpha, beta, kappa_0, kappa, inf_over_test], dtype=float)
+
+        _validate_params(arr, SIRX_NUM_PARAMS)
+
+        self.p = arr
+        return self
+
     def set_params(self, p, initial_conds):
         """ Set model parameters.
 
@@ -84,6 +124,45 @@ class SIRX(Model):
         """
         super().set_params(p, initial_conds)
         self.fit_input = 4  # By default, fit against containment compartment X
+        return self
+
+    def set_initial_conds(self, array=None, n_S0=None, n_I0=None, n_R0=None, n_X0=None):
+        """ Set SIR-X initial conditions
+
+        Args:
+            array (list): List of initial conditions [n_S0, n_I0, n_R0, n_X0].
+                If set, all other arguments are ignored.
+
+                - n_S0: Total number of susceptible to the infection
+                - n_I0: Total number of infected
+                - n_R0: Total number of recovered
+                - n_X0: Total number of quarantined
+
+                Note: n_S0 + n_I0 + n_R0 + n_X0 = Population
+
+        Note:
+            Internally, the model initial conditions are the ratios
+
+            - S0 = n_S0/Population
+            - I0 = n_I0/Population
+            - R0 = n_R0/Population
+            - X0 = n_X0/Population
+
+            which is consistent with the mathematical description
+            of the SIR-X model.
+
+        Returns:
+            SIRX: Reference to self
+        """
+        if array:
+            arr = np.array(array, dtype=float)
+        else:
+            arr = np.array([n_S0, n_I0, n_R0, n_X0], dtype=float)
+
+        _validate_params(arr, SIRX_NUM_IC)
+
+        self.pop = np.sum(arr)
+        self.w0 = arr / self.pop
         return self
 
     def _update_ic(self):
