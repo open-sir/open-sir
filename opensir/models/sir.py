@@ -67,6 +67,10 @@ class SIR(Model):
                 If a list is used, the order of initial conditions is
                 [n_S0, n_I0, n_R0]
 
+        Deprecated:
+            This function is deprecated and will be removed soon.
+            Please use :py:func:`set_parameters` and :py:func:`set_initial_conds`
+
         Returns:
             SIR: reference to self
         """
