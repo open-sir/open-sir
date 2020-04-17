@@ -58,10 +58,10 @@ class Model:
         """ Set model parameters.
         Args:
             p (dict or list): parameters of the model. The parameters units are 1/day,
-                      and should be >= 0.
+                and should be >= 0.
             initial_conds (dict or list): Initial conditions, in total number of individuals.
-            For instance, S0 = n_S0/population, where n_S0 is the number of subjects
-            who are susceptible to the disease.
+                For instance, S0 = n_S0/population, where n_S0 is the number of subjects
+                who are susceptible to the disease.
 
         Note:
             Support for list of params and initial conditions will be deprecated
@@ -74,10 +74,10 @@ class Model:
         params = self.PARAMS
         ic = self.IC
 
-        if type(p) is dict:
+        if isinstance(p, dict):
             p = [p[d] for d in params if d in p.keys()]
 
-        if type(initial_conds) is dict:
+        if isinstance(initial_conds, dict):
             initial_conds = [initial_conds[d] for d in ic if d in initial_conds.keys()]
 
         num_params = len(params)
@@ -207,3 +207,11 @@ class Model:
     def _update_ic(self):
         """ updates initial conditions if necessary """
         return self
+
+
+def _validate_params(arr, num_params):
+    if np.isnan(arr).any() or len(arr) != num_params:
+        raise Model.InvalidNumberOfParametersError
+
+    if sum(arr < 0) > 0:
+        raise Model.InvalidParameterError
