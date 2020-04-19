@@ -85,7 +85,7 @@ class Model:
 
         try:
             for param in p:
-                assert param > 0
+                assert param >= 0
         except:
             raise self.InvalidParameterError()
 
