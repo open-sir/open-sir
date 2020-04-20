@@ -79,7 +79,8 @@ jobs:
     steps:
       - checkout
       - docker/build:
-          image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
+          image: $DOCKER_LOGIN/$CIRCLE_PROJECT_REPONAME
+          cache_from: $DOCKER_LOGIN/$CIRCLE_PROJECT_REPONAME
 
 workflows:
   version: 2
@@ -118,5 +119,6 @@ workflows:
             branches:
               only: master
           image: $DOCKER_LOGIN/$CIRCLE_PROJECT_REPONAME
+          cache_from: $DOCKER_LOGIN/$CIRCLE_PROJECT_REPONAME
           tag: latest #TODO: version this somehow, defaults to $CIRCLE_SHA1
           use-docker-credentials-store: true
