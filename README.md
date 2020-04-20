@@ -45,7 +45,7 @@ So far, Open-SIR provides an implementation of the SIR model and the novel
 Institut][rki-model].
 
 The figure below illustrates how Open-SIR can be used to fit
-compartmental models to real data of coronavirus SARS-CoV-2 reported cases in a  population of interest.
+compartmental models to real data of coronavirus SARS-CoV-2 reported cases in a population of interest.
 
 <img src="https://user-images.githubusercontent.com/33637198/79390418-8f414580-7f67-11ea-880d-9d30523ddbe3.png" width="480px;" height="400px;">
 
