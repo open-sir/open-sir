@@ -3,6 +3,8 @@ import numpy as np  # Numerical computing
 from scipy.integrate import odeint  # ODE system numerical integrator
 from scipy.optimize import curve_fit
 
+from opensir.models.post_regression import ConfidenceIntervalsMixin
+
 ABSERR = 1.0e-8
 RELERR = 1.0e-6
 DAYS = 7
@@ -24,7 +26,7 @@ def call_solver(func, p, w0, t):
     return np.insert(sol, 0, t, axis=1)
 
 
-class Model:
+class Model(ConfidenceIntervalsMixin):
     """ Base model definition """
 
     CSV_ROW = []
