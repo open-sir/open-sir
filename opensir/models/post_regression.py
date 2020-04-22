@@ -144,6 +144,21 @@ def rolling_avg(x_list):
 class ConfidenceIntervalsMixin:
     """ Mixin with confidence interval definitions """
 
+    def is_initialized(self):
+        """ Checks that the model is initialized and fitted before calling
+        any postprocessing rotuine"""
+        if not self.is_fitted:
+            raise self.InitializationError(
+                "The .fit() function must be called on the model \
+            instance before calculating confidence intervals"
+            )
+
+        if (self.p is None) | (self.w0 is None):
+            raise self.InitializationError(
+                "The initial conditions and parameters must \
+            be initialized before calculating confidence intervals"
+            )
+
     def ci_bootstrap(self, alpha=0.95, n_iter=1000, r0_ci=True):
         """ Calculates the confidence interval of the parameters
         using the random sample bootstrap method.
@@ -180,6 +195,19 @@ class ConfidenceIntervalsMixin:
                     the parameters.
 
         """
+
+        self.is_initialized()
+
+        # If no options provided, use default confidence interval of 95%
+        if options is None:
+            options = {"alpha": 0.95, "n_iter": 1000, "r0_ci": True}
+        else:
+            opt_keys = ["alpha", "n_iter", "r0_ci"]
+            for key in opt_keys:
+                if key not in options:
+                    raise self.InvalidParameterError(
+                        "options dictionary doesn't include all keys"
+                    )
 
         p0 = self.p
 
@@ -218,13 +246,16 @@ class ConfidenceIntervalsMixin:
     def block_cv(self, lags=1, min_sample=3):
         """ Calculates mean squared error of the predictions as a
         measure of model predictive performance using block
-        cross validation.
+        cross validation. This method is appropriate for time series
+        and differential systems when the value of the states in the
+        time (t+1) is not independent from the value of the states in the
+        time t.
+
+        The model needs to be initialized and fitted prior 
+        calling block_cv.
 
         The cross-validation mean squared error can be used to
         estimate a confidence interval of model predictions.
-
-        The model needs to be initialized and fitted
-        prior calling block_cv.
 
         Args:
             lags (int): Defines the number of days that will be
@@ -255,6 +286,10 @@ class ConfidenceIntervalsMixin:
 
         """
         # Consider at least the three first datapoints
+
+        # Check that the model was initialized
+        self.is_initialized()
+
         p_list = []
         mse_fc = []  # List of MSE of the prediction for the time t + i lags
         for i in range(min_sample, len(self.fit_attr["n_obs"]) + 1):
