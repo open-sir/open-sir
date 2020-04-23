@@ -4,6 +4,7 @@
 [rtd]: https://readthedocs.org/projects/open-sir/badge/?version=latest
 [sir]: http://rocs.hu-berlin.de/corona/docs/forecast/model/#classic-sir-dynamics
 [sirx]: https://science.sciencemag.org/content/early/2020/04/07/science.abb4557.full
+[rki]: https://www.rki.de/EN/Home/homepage_node.html
 [rki-model]: http://rocs.hu-berlin.de/corona/docs/forecast/model/#sir-x-dynamics-outbreaks-with-temporally-increasing-interventions
 [doc]: https://open-sir.readthedocs.io/
 [gs]: https://open-sir.readthedocs.io/en/latest/doc/getting-started.html
@@ -12,10 +13,8 @@
 [alamos]: https://github.com/jia200x
 [huerta]: https://github.com/felipehuerta17
 [phd-huerta]: https://www.imperial.ac.uk/people/f.huerta-perez17
-[salata]: https://github.com/sasalatart
 [contributors]: https://github.com/open-sir/open-sir/contributors
-[rki]: https://www.rki.de/EN/Home/homepage_node.html
-[pic]: https://user-images.githubusercontent.com/33637198/79390418-8f414580-7f67-11ea-880d-9d30523ddbe3.png
+[all-contributors]: https://github.com/all-contributors/all-contributors
 
 # open-sir
 
@@ -24,39 +23,37 @@
 [![Code style: black][black]](https://github.com/psf/black)
 [![Documentation Status][rtd]](https://open-sir.readthedocs.io/en/latest)
 
-Open-SIR is an Open Source Python project for modelling pandemics and
-infectious diseases using Compartmental Models, such as the widely used
-[Susceptible-Infected-Removed (SIR) model][sir].
+Open-SIR is an Open Source Python project for modelling pandemics and infectious diseases using
+Compartmental Models, such as the widely used [Susceptible-Infected-Removed (SIR) model][sir].
 
-The current stage of the software is *Alpha*.
+The current stage of the software is _Alpha_.
 
 ## Features
+
 - Model the dynamics of infectious diseases
 - Parameter fitting
 - Calculation of confidence intervals
 - CLI for interfacing with non Python environments (Bash, Node.JS, Matlab, etc).
 
-
-For the API reference and examples of usage, please check the
-[online documentation][doc].
+For the API reference and examples of usage, please check the [online documentation][doc].
 
 So far, Open-SIR provides an implementation of the SIR model and the novel
-[SIR-X model developed by Maier and Dirk][sirx] from the [Robert Koch
-Institut][rki-model].
+[SIR-X model developed by Maier and Dirk][sirx] from the [Robert Koch Institut][rki-model].
 
-The figure below illustrates how Open-SIR can be used to fit
-compartmental models to real data of coronavirus SARS-CoV-2 reported cases in a  population of interest.
+The figure below illustrates how Open-SIR can be used to fit compartmental models to real data of
+coronavirus SARS-CoV-2 reported cases in a population of interest.
 
-<img src="https://user-images.githubusercontent.com/33637198/79390418-8f414580-7f67-11ea-880d-9d30523ddbe3.png" width="480px;" height="400px;">
+<img src="https://bit.ly/2yxEY6S" width="480px;" height="400px;">
 
-This is an example of using Open-SIR to fit the model developed by Maier and Brockmann, 2020, *Containment explains subexponential growth in confirmed cases of recent COVID-19 in Mainland China*, Science, DOI: 10.1126/science.abb4557 to Guangdong data.
-
+This is an example of using Open-SIR to fit the model developed by Maier and Brockmann, 2020,
+_Containment explains subexponential growth in confirmed cases of recent COVID-19 in Mainland
+China_, Science, DOI: 10.1126/science.abb4557 to Guangdong data.
 
 ### Getting started
 
 Welcome to Open-Sir! Install Open-SIR using `pip`
 
-```
+```sh
 git clone https://github.com/open-sir/open-sir.git
 cd open-sir
 pip install .
@@ -66,27 +63,18 @@ Please follow [Getting Started][gs] to get your hands on Open-SIR.
 
 ## Authors
 
-* **[José Álamos][alamos]** -
-  [RIOT-OS][riot]
-* **[Felipe Huerta][huerta]** - [PhD
-  Student][phd-huerta] at [Imperial
-College London][imperial]
-* **[Sebastián Salata][salata]** - Software Engineer -
-  Full Stack
+- **[José Álamos][alamos]** - [RIOT-OS][riot]
+- **[Felipe Huerta][huerta]** - [PhD Student][phd-huerta] at [Imperial College London][imperial]
 
-See also the list of
-[contributors][contributors] who
-participated in this project.
+See also the list of [contributors][contributors] who participated in this project.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE)
-file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgements
 
-* [Robert Koch Institut][rki] for the
-  clear explanation of SIR and SIR-X models.
+- [Robert Koch Institut][rki] for the clear explanation of SIR and SIR-X models.
 
 ## Contributors ✨
 
@@ -111,4 +99,5 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+This project follows the [all-contributors][all-contributors] specification. Contributions of any
+kind are welcome!
