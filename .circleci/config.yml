@@ -5,6 +5,7 @@ orbs:
 
 aliases:
   - &py-docker-image circleci/python:3.7
+  - &node-docker-image circleci/node:12.13.0
   - &working-directory ~/repo
   - &py-cache-key v2-{{ checksum "Pipfile.lock" }}
   - &py-cache-restore-keys
@@ -16,6 +17,11 @@ executors:
     working_directory: *working-directory
     docker:
       - image: *py-docker-image
+
+  node-executor:
+    working_directory: *working-directory
+    docker:
+      - image: *node-docker-image
 
 commands:
   bootstrap:
@@ -36,6 +42,23 @@ jobs:
           key: *py-cache-key
           paths:
             - ~/.local/share
+
+  commitlint:
+    description: Lint commit messages according to Conventional Commits
+    executor: node-executor
+    steps:
+      - checkout
+      - run:
+          name: Install
+          command: |
+            sudo npm install -g @commitlint/{config-conventional,cli}
+            CONFIG="{extends: ['@commitlint/config-conventional'], defaultIgnores: false, rules: {'subject-empty': [2, 'never']}}"
+            echo "module.exports = $CONFIG" > commitlint.config.js
+      - run:
+          name: commitlint
+          command: |
+            FROM_SHA="$(git log origin/master..$CIRCLE_SHA1 --oneline | tail -1 | awk '{print $1}')"
+            commitlint --from $FROM_SHA --to $CIRCLE_SHA1
 
   lint:
     description: Run pylint
@@ -86,6 +109,10 @@ workflows:
   version: 2
   commit:
     jobs:
+      - commitlint:
+          filters:
+            branches:
+              ignore: master
       - bootstrap
       - lint:
           requires:
