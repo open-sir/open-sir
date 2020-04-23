@@ -34,7 +34,9 @@ def _percentile_to_ci(alpha, p_bt):
 class ConfidenceIntervalsMixin:
     """ Mixin with confidence interval definitions """
 
-    def ci_bootstrap(self, t_obs, n_i_obs, population, options=None):
+    def ci_bootstrap(
+        self, t_obs, n_i_obs, population, alpha=0.95, n_iter=1000, r0_ci=True
+    ):
         """ Calculates the confidence interval of the parameters
         using the random sample bootstrap method.
 
@@ -50,15 +52,21 @@ class ConfidenceIntervalsMixin:
 
             population (int): Population size
 
-            options (dict): Random sampling bootstrapping options
-                - alpha : numerical scalar
-                Percentile of the confidence interval required.
-                Default = 0.95
-                - n_iter (int): Number of random samples that will be taken to
-                fit the model and perform the bootstrapping.
-                Use n_iter >= 1000. (default = 1000)
-                - r0_ci (boolean): Set to True to also return the reproduction
-                rate R_0 confidence interval. (default = True)
+            alpha (float): Percentile of the confidence interval required.
+
+            n_iter (int): Number of random samples that will be taken to
+                fit the model and perform the bootstrapping.  Use n_iter >= 1000
+
+            r0_ci (boolean): Set to True to also return the reproduction
+                rate R_0 confidence interval.
+
+        Note:
+            This traditional random sampling bootstrap is not a good way to
+            bootstrap time-series data , baceuse the data because X(t+1) is
+            correlated with X(t). In any case, it provides a reference case and
+            it will can be an useful method for other types of models. When
+            using this function, always compare the prediction error with the
+            interval provided by the function ci_block_cv.
 
         Returns:
             tuple: tuple containing:
@@ -71,33 +79,22 @@ class ConfidenceIntervalsMixin:
                     visualize and try to infer the probability density function of
                     the parameters.
 
-        Note:
-            This traditional random sampling bootstrap is not a good way to
-            bootstrap time-series data , baceuse the data because X(t+1) is
-            correlated with X(t). In any case, it provides a reference case and
-            it will can be an useful method for other types of models. When
-            using this function, always compare the prediction error with the
-            interval provided by the function ci_block_cv.
         """
-
-        # If no options provided, use default confidence interval of 95%
-        if options is None:
-            options = {"alpha": 0.95, "n_iter": 1000, "r0_ci": True}
 
         p0 = self.p
 
         p_bt = []
-        if options["r0_ci"]:
+        if r0_ci:
             r0_bt = []
 
         # Perform bootstraping
-        for i in range(0, options["n_iter"]):  # pylint: disable=W0612
+        for i in range(0, n_iter):  # pylint: disable=W0612
             t_rs, n_i_rs = _sort_resample(t_obs, n_i_obs)
             w0_rs = [population - n_i_rs[0], n_i_rs[0], 0]  # Still assume r0=0
             self.set_params(self.p, w0_rs)
             self.fit(t_rs, n_i_rs, population)
             p_bt.append(self.p)
-            if options["r0_ci"]:
+            if r0_ci:
                 r0_bt.append(self.r0)
 
         p_bt = np.array(p_bt)
@@ -105,10 +102,10 @@ class ConfidenceIntervalsMixin:
         ci = []
         # Calculate and append confidence intervals for each parameters
         for i in range(len(self.p)):
-            ci.append(_percentile_to_ci(options["alpha"], p_bt[:, i]))
+            ci.append(_percentile_to_ci(alpha, p_bt[:, i]))
         # If true, calculate and append confidence interval for r0
-        if options["r0_ci"]:
-            ci.append(_percentile_to_ci(options["alpha"], r0_bt))
+        if r0_ci:
+            ci.append(_percentile_to_ci(alpha, r0_bt))
 
         ci = np.array(ci)
         # Reconstruct model original parameters
@@ -116,7 +113,7 @@ class ConfidenceIntervalsMixin:
 
         return ci, p_bt
 
-    def ci_block_cv(self, t_obs, n_i_obs, population, options=None):
+    def ci_block_cv(self, t_obs, n_i_obs, population, lags=1, min_sample=3):
         """ Calculates the confidence interval of the model parameters
         using a block cross validation appropriate for time series
         and differential systems when the value of the states in the
@@ -135,16 +132,16 @@ class ConfidenceIntervalsMixin:
 
             population (int): population size
 
-            options (dict): Time bootstrapping options
-                - lags (int): Defines the number of days that will be
+            lags (int): Defines the number of days that will be
                 forecasted to calculate the mean squared error. For
                 example, for the prediction Xp(t) and the real value
                 X(t), the mean squared error will be calculated as mse =
                 `1/n_boots |Xp(t+lags)-X(t+lags)|`. This provides an
                 estimate of the mean deviation of the predictions after
-                "lags" days.  (default = 1)
-                - min_sample (int): Number of days that will be used in the train
-                set to make the first prediction. (default = 3)
+                "lags" days.
+
+            min_sample (int): Number of days that will be used in the train
+                set to make the first prediction.
 
         Returns:
             tuple: tuple containing:
@@ -166,15 +163,10 @@ class ConfidenceIntervalsMixin:
         p0 = self.p
         w0 = self.w0
 
-        if options is None:
-            options = {"lags": 1, "min_sample": 3}
-
-        lags = options["lags"]
-
         # Consider at least the three first datapoints
         p_list = []
         mse_list = []  # List of mean squared errors of the prediction for the time t+1
-        for i in range(options["min_sample"] - 1, len(n_i_obs) - lags):
+        for i in range(min_sample - 1, len(n_i_obs) - lags):
             # Fit model to a subset of the time-series data
             self.fit(t_obs[0:i], n_i_obs[0:i], population)
             # Store the rolling parameters
