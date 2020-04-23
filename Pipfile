@@ -29,6 +29,7 @@ allow_prereleases = true
 [scripts]
 start = "python opensir-cli"
 lint = "pylint **/*.py"
+markdownlint = "npx markdownlint-cli README.md"
 test = "pytest"
 doc = "sphinx-build -M html doc doc/build -W"
 black = "black ."

@@ -61,13 +61,22 @@ jobs:
             commitlint --from $FROM_SHA --to $CIRCLE_SHA1
 
   lint:
-    description: Run pylint
+    description: Lint Python code
     executor: py-executor
     steps:
       - bootstrap
       - run:
-          name: Run linter
+          name: Run pylint
           command: pipenv run pylint **/*.py
+
+  markdownlint:
+    description: Lint README.md
+    executor: node-executor
+    steps:
+      - checkout
+      - run:
+          name: Run markdownlint
+          command: npx markdownlint-cli README.md
 
   black_check:
     description: Check code formatting with Black
@@ -114,6 +123,9 @@ workflows:
             branches:
               ignore: master
       - bootstrap
+      - markdownlint:
+          requires:
+            - bootstrap
       - lint:
           requires:
             - bootstrap

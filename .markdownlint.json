@@ -1,0 +1,6 @@
+{
+  "line-length": { "line_length": 100 },
+  "no-inline-html": {
+    "allowed_elements": ["img"]
+  }
+}
