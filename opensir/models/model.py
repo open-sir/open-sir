@@ -45,12 +45,14 @@ class Model(ConfidenceIntervalsMixin):
     class InvalidParameterError(Exception):
         """Raised when an initial parameter of a value is not correct"""
 
-        pass
-
     class InvalidNumberOfParametersError(Exception):
         """Raised when the number of initial parameters is not correct"""
 
-        pass
+    class InconsistentDimensionsError(Exception):
+        """Raised when the length of the days array is
+        not equal to the dimension of the observed cases, or if the length
+        of fit_index has a length different than the length
+        of the parameter array self.p"""
 
     @property
     def _model(self):
@@ -158,14 +160,19 @@ class Model(ConfidenceIntervalsMixin):
         """
         return self.p[0] / self.p[1]
 
-    def fit(self, t_obs, n_i_obs, population, fit_index=None):
+    def fit(self, t_obs, n_obs, population, fit_index=None):
         """ Use the Levenberg-Marquardt algorithm to fit
         model parameters consistent with True entries in the fit_index list.
 
         Args:
-            t_obs (np.array): Vector of days corresponding to the observations
-                of number of infected people
-            n_i_obs (np.array): Vector of number of infected people
+            t_obs (numpy.ndarray): Vector of days corresponding to
+                the observations of number of infected people.
+                Must be a non-decreasing array.
+            n_obs (numpy.nparray): Vector which contains the observed
+                epidemiological variable to fit the model against.
+                It must be consistent with t_obs. The model fit_input
+                attribute defines against which epidemiological variable
+                the fitting is going to be performed.
             population (integer): Size of the objective population
             fit_index (list of booleans , optional): this list must be
                 of the same size of the number of  parameters of the model.
@@ -177,10 +184,35 @@ class Model(ConfidenceIntervalsMixin):
             Model: Reference to self
         """
 
+        # If t_obs or n_obs are not numpy arrays, raise error
+        if (not isinstance(t_obs, np.ndarray)) | (not isinstance(n_obs, np.ndarray)):
+            raise self.InvalidParameterError("t_obs and n_obs must be a numpy arrays")
+
+        # Raise error if any time or number of infected is negative
+        if any(t_obs < 0) | any(n_obs < 0):
+            raise self.InvalidParameterError(
+                "Time and number of infected must be non-negative"
+            )
+
+        # Raise error if any time or number of infected lists
+        # is non monotonically increasing
+        if any(np.diff(t_obs) < 0):
+            raise self.InvalidParameterError(
+                "The array of times must be non decreasing"
+            )
+
+        # Check consistent dimensions
+        if len(t_obs) != len(n_obs):
+            raise self.InconsistentDimensionsError(Exception)
         # if no par_index is provided, fit only the first parameter
         if fit_index is None:
             fit_index = [False for i in range(len(self.p))]
             fit_index[0] = True
+        elif len(fit_index) != len(self.p):
+            raise self.InconsistentDimensionsError(Exception)
+
+        # Check consistent inputs for fitting
+        # for i in
 
         # Initial values of the parameters to be fitted
         fit_params0 = np.array(self.p)[fit_index]
@@ -200,7 +232,7 @@ class Model(ConfidenceIntervalsMixin):
         bounds = (np.zeros(len(fit_params0)), np.ones(len(fit_params0)) * 100)
         # return p_new, pcov
         par_opt, pcov = curve_fit(
-            f=function_handle, xdata=t_obs, ydata=n_i_obs, p0=fit_params0, bounds=bounds
+            f=function_handle, xdata=t_obs, ydata=n_obs, p0=fit_params0, bounds=bounds
         )
         self.p[fit_index] = par_opt
         self.pcov = pcov  # This also flags that the model was fitted
