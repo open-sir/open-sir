@@ -34,15 +34,9 @@ def _percentile_to_ci(alpha, p_bt):
 class ConfidenceIntervalsMixin:
     """ Mixin with confidence interval definitions """
 
-    def ci_bootstrap(
-        self,
-        t_obs,
-        n_i_obs,
-        population,
-        alpha=0.95,
-        n_iter=1000,
-        r0_ci=True,  # pylint: disable=C0330
-    ):
+    def ci_bootstrap(  # pylint: disable=C0330
+        self, t_obs, n_i_obs, population, alpha=0.95, n_iter=1000, r0_ci=True,
+    ):  # pylint: disable=R0913
         """ Calculates the confidence interval of the parameters
         using the random sample bootstrap method.
 
@@ -119,7 +113,9 @@ class ConfidenceIntervalsMixin:
 
         return ci, p_bt
 
-    def ci_block_cv(self, t_obs, n_i_obs, population, lags=1, min_sample=3):
+    def ci_block_cv(
+        self, t_obs, n_i_obs, population, lags=1, min_sample=3  # pylint: disable=C0330
+    ):  # pylint: disable=R0913
         """ Calculates the confidence interval of the model parameters
         using a block cross validation appropriate for time series
         and differential systems when the value of the states in the
