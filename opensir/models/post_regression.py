@@ -35,7 +35,7 @@ class ConfidenceIntervalsMixin:
     """ Mixin with confidence interval definitions """
 
     def ci_bootstrap(  # pylint: disable=C0330
-        self, t_obs, n_i_obs, population, alpha=0.95, n_iter=1000, r0_ci=True,
+        self, t_obs, n_i_obs, alpha=0.95, n_iter=1000, r0_ci=True,
     ):  # pylint: disable=R0913
         """ Calculates the confidence interval of the parameters
         using the random sample bootstrap method.
@@ -90,9 +90,9 @@ class ConfidenceIntervalsMixin:
         # Perform bootstraping
         for i in range(0, n_iter):  # pylint: disable=W0612
             t_rs, n_i_rs = _sort_resample(t_obs, n_i_obs)
-            w0_rs = [population - n_i_rs[0], n_i_rs[0], 0]  # Still assume r0=0
+            w0_rs = [self.pop - n_i_rs[0], n_i_rs[0], 0]  # Still assume r0=0
             self.set_params(self.p, w0_rs)
-            self.fit(t_rs, n_i_rs, population, self.fit_index)
+            self.fit(t_rs, n_i_rs, self.fit_index)
             p_bt.append(self.p)
             if r0_ci:
                 r0_bt.append(self.r0)
@@ -114,7 +114,7 @@ class ConfidenceIntervalsMixin:
         return ci, p_bt
 
     def ci_block_cv(
-        self, t_obs, n_i_obs, population, lags=1, min_sample=3  # pylint: disable=C0330
+        self, t_obs, n_i_obs, lags=1, min_sample=3  # pylint: disable=C0330
     ):  # pylint: disable=R0913
         """ Calculates the confidence interval of the model parameters
         using a block cross validation appropriate for time series
@@ -170,7 +170,7 @@ class ConfidenceIntervalsMixin:
         mse_list = []  # List of mean squared errors of the prediction for the time t+1
         for i in range(min_sample, len(n_i_obs) - lags + 1):
             # Fit model to a subset of the time-series data
-            self.fit(t_obs[0:i], n_i_obs[0:i], population, self.fit_index)
+            self.fit(t_obs[0:i], n_i_obs[0:i], self.fit_index)
             # Store the rolling parameters
             p_list.append(self.p)
             # Predict for the i + lags period
