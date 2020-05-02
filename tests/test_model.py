@@ -71,7 +71,6 @@ class TestModel:
 
         t_obs = np.array([0, 1, 2, 3, 4])
         n_i_obs = np.array([0, 10, 20])
-        pop = 1000
         # Test with a fit_index for an unrealistic
         # number of parameters
         model.p = [1, 2]
@@ -79,10 +78,10 @@ class TestModel:
 
         # Test inconsistent dimensions of t_obs and n_i_obs
         with pytest.raises(Model.InconsistentDimensionsError):
-            model.fit(t_obs, n_i_obs, pop)
+            model.fit(t_obs, n_i_obs)
         # Testinconsistent dimnesions between fit_index and self.p
         with pytest.raises(Model.InconsistentDimensionsError):
-            model.fit(t_obs[:3], n_i_obs, pop, fit_index)
+            model.fit(t_obs[:3], n_i_obs, fit_index)
 
     def test_input_validity(self, model):
         """ Test that providing negative times, negative number of

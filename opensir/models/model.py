@@ -39,12 +39,14 @@ class Model(ConfidenceIntervalsMixin):
         self.p = None
         self.pop = None
         self.w0 = None
-        # Attributes setted after fitting
-        self.pcov = None
         self.fit_input = None
         self.fit_index = None  # Store fitting info for post-regression analysis
-        self.t_obs = None
-        self.n_obs = None
+        # Attributes setted after fitting
+        self.postreg = {
+            "pcov": None,
+            "t_obs": None,
+            "n_obs": None,
+        }
 
     class InvalidParameterError(Exception):
         """Raised when an initial parameter of a value is not correct"""
@@ -174,10 +176,11 @@ class Model(ConfidenceIntervalsMixin):
                 Must be a non-decreasing array.
             n_obs (numpy.nparray): Vector which contains the observed
                 epidemiological variable to fit the model against.
-                It must be consistent with t_obs. The model fit_input
-                attribute defines against which epidemiological variable
-                the fitting is going to be performed.
-            population (integer): Size of the objective population
+                It must be consistent with t_obs and with the initial
+                conditions defined when building the model and using the
+                set_parameters and set_initial_conds function.
+                The model fit_input attribute defines against which
+                epidemiological variable the fitting will be performed.
             fit_index (list of booleans , optional): this list must be
                 of the same size of the number of  parameters of the model.
                 The parameter p[i] will be fitted if fit_index[i] = True. Otherwise,
@@ -217,8 +220,12 @@ class Model(ConfidenceIntervalsMixin):
 
         # Check consistent inputs for fitting
         # for i in
-
+        # Set post-fit model attributes
         self.fit_index = fit_index
+        if self.postreg["t_obs"] is None:
+            self.postreg["t_obs"] = t_obs
+        if self.postreg["n_obs"] is None:
+            self.postreg["n_obs"] = n_obs
 
         # Initial values of the parameters to be fitted
         fit_params0 = np.array(self.p)[self.fit_index]
@@ -241,7 +248,7 @@ class Model(ConfidenceIntervalsMixin):
             f=function_handle, xdata=t_obs, ydata=n_obs, p0=fit_params0, bounds=bounds
         )
         self.p[self.fit_index] = par_opt
-        self.pcov = pcov  # This also flags that the model was fitted
+        self.postreg["pcov"] = pcov  # This also flags that the model was fitted
         return self
 
     def _update_ic(self):
