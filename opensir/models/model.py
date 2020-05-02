@@ -39,9 +39,12 @@ class Model(ConfidenceIntervalsMixin):
         self.p = None
         self.pop = None
         self.w0 = None
+        # Attributes setted after fitting
         self.pcov = None
         self.fit_input = None
         self.fit_index = None  # Store fitting info for post-regression analysis
+        self.t_obs = None
+        self.n_obs = None
 
     class InvalidParameterError(Exception):
         """Raised when an initial parameter of a value is not correct"""
@@ -161,7 +164,7 @@ class Model(ConfidenceIntervalsMixin):
         """
         return self.p[0] / self.p[1]
 
-    def fit(self, t_obs, n_obs, population, fit_index=None):
+    def fit(self, t_obs, n_obs, fit_index=None):
         """ Use the Levenberg-Marquardt algorithm to fit
         model parameters consistent with True entries in the fit_index list.
 
@@ -222,7 +225,7 @@ class Model(ConfidenceIntervalsMixin):
         # Define fixed parameters: this set of parameters won't be fitted
         # fixed_params = self.p[fix_index]
 
-        def function_handle(t, *par_fit, pop=population):
+        def function_handle(t, *par_fit, pop=self.pop):
             params = np.array(self.p)
             params[self.fit_index] = par_fit
             self.p = params
