@@ -96,7 +96,6 @@ class SIR(Model):
         Returns:
             SIR: Reference to self
         """
-        self.fit_input = 2  # By default, fit against infected
         if array:
             arr = np.array(array, dtype=float)
         else:
@@ -104,6 +103,7 @@ class SIR(Model):
 
         _validate_params(arr, SIR_NUM_PARAMS)
 
+        self.fit_input = 2  # By default, fit against infected
         self.p = arr
         return self
 

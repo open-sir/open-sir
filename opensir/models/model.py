@@ -40,13 +40,7 @@ class Model(ConfidenceIntervalsMixin):
         self.pop = None
         self.w0 = None
         self.fit_input = None
-        self.fit_index = None  # Store fitting info for post-regression analysis
-        # Attributes setted after fitting
-        self.postreg = {
-            "pcov": None,
-            "t_obs": None,
-            "n_obs": None,
-        }
+        self.fit_attr = None  # Dict set after the first call of fit
 
     class InvalidParameterError(Exception):
         """Raised when an initial parameter of a value is not correct"""
@@ -212,33 +206,43 @@ class Model(ConfidenceIntervalsMixin):
         if len(t_obs) != len(n_obs):
             raise self.InconsistentDimensionsError(Exception)
         # if no par_index is provided, fit only the first parameter
-        if (fit_index is None) & (self.fit_index is None):
+        if fit_index is None:
             fit_index = [False for i in range(len(self.p))]
             fit_index[0] = True
         elif len(fit_index) != len(self.p):
             raise self.InconsistentDimensionsError(Exception)
 
+        # Initialize self.fit_attr in the first call of fit
+        if self.fit_attr is None:
+            self.fit_attr = {
+                "fit_input": self.fit_input,  # Is not None because it depends on the model
+                "fit_index": None,
+                "t_obs": None,
+                "n_obs": None,
+                "pcov": None,
+            }
+
         # Check consistent inputs for fitting
         # for i in
         # Set post-fit model attributes
-        self.fit_index = fit_index
-        if self.postreg["t_obs"] is None:
-            self.postreg["t_obs"] = t_obs
-        if self.postreg["n_obs"] is None:
-            self.postreg["n_obs"] = n_obs
+        self.fit_attr["fit_index"] = fit_index
+        if self.fit_attr["t_obs"] is None:
+            self.fit_attr["t_obs"] = t_obs
+        if self.fit_attr["n_obs"] is None:
+            self.fit_attr["n_obs"] = n_obs
 
         # Initial values of the parameters to be fitted
-        fit_params0 = np.array(self.p)[self.fit_index]
+        fit_params0 = np.array(self.p)[self.fit_attr["fit_index"]]
         # Define fixed parameters: this set of parameters won't be fitted
         # fixed_params = self.p[fix_index]
 
         def function_handle(t, *par_fit, pop=self.pop):
             params = np.array(self.p)
-            params[self.fit_index] = par_fit
+            params[self.fit_attr["fit_index"]] = par_fit
             self.p = params
             self._update_ic()  # Updates IC if necessary. For example, i_o/x_0 for SIR-X
             sol_mod = call_solver(self._model, self.p, self.w0, t)
-            return sol_mod[:, self.fit_input] * pop
+            return sol_mod[:, self.fit_attr["fit_input"]] * pop
 
         # Fit parameters
         # Ensure non-negativity and a loose upper bound
@@ -247,8 +251,8 @@ class Model(ConfidenceIntervalsMixin):
         par_opt, pcov = curve_fit(
             f=function_handle, xdata=t_obs, ydata=n_obs, p0=fit_params0, bounds=bounds
         )
-        self.p[self.fit_index] = par_opt
-        self.postreg["pcov"] = pcov  # This also flags that the model was fitted
+        self.p[self.fit_attr["fit_index"]] = par_opt
+        self.fit_attr["pcov"] = pcov  # This also flags that the model was fitted
         return self
 
     def _update_ic(self):
