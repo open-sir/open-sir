@@ -69,6 +69,18 @@ class TestUnittestSir:
     def model(self):
         return SIRX()
 
+    def test_predict(self, model):
+        t = 6
+        model.set_params(DEFAULT_PARAMS, GUANGDONG_IC)
+        model.solve(t, t + 1)
+        m_list = model.fetch()
+
+        new_model = SIRX()
+        new_model.set_params(DEFAULT_PARAMS, GUANGDONG_IC)
+        new_list = new_model.predict(t)
+
+        assert np.array_equal(new_list, m_list)
+
     def test_dict_and_list_params_produce_same_results(self, model):
         t = 6
         model.set_params(DEFAULT_PARAMS, GUANGDONG_IC)
