@@ -15,7 +15,7 @@ def sir(w, t, p):
     where
         S: Fraction of the population susceptible to the infection
         I: Fraction on the population infected
-        R: Fraction of the population recovered
+        R: Fraction of the population removed
     t: Current time
     p: vector of parameter
 
@@ -41,6 +41,22 @@ class SIR(Model):
     IC = ["n_S0", "n_I0", "n_R0"]
     NAME = "SIR"
 
+    def predict(self, n_days=7):
+        """ Predict Susceptible, Infected and Removed
+
+        Args:
+            n_days (int): number of days to predict
+
+        Returns:
+            np.array: Array with:
+                - T: days of the predictions, where T[0] represents the last
+                  day of the sample and T[1] onwards the predictions.
+                - S: Predicted number of susceptible
+                - I: Predicted number of infected
+                - R: Predicted number of removed
+        """
+        return self.solve(n_days, n_days + 1).fetch()
+
     def set_params(self, p, initial_conds):
         """ Set model parameters.
 
@@ -52,7 +68,7 @@ class SIR(Model):
 
                 - n_S0: Total number of susceptible to the infection
                 - n_I0: Toral number of infected
-                - n_R0: Total number of recovered
+                - n_R0: Total number of removed
 
                 Note n_S0 + n_I0 + n_R0 = Population
 
@@ -117,7 +133,7 @@ class SIR(Model):
 
                 - n_S0: Total number of susceptible to the infection
                 - n_I0: Total number of infected
-                - n_R0: Total number of recovered
+                - n_R0: Total number of removed
 
                 Note: n_S0 + n_I0 + n_R0 = Population
 

@@ -17,7 +17,7 @@ def sirx(w, t, p):
     where
         S: Fraction of the population susceptible to the infection
         I: Fraction on the population infected
-        R: Fraction of the population that recovered
+        R: Fraction of the population that removed
         X: Fraction of the population that is quarantined
 
     t: time
@@ -54,6 +54,23 @@ class SIRX(Model):
     PARAMS = ["alpha", "beta", "kappa_0", "kappa", "inf_over_test"]
     IC = ["n_S0", "n_I0", "n_R0", "n_X0"]
     NAME = "SIRX"
+
+    def predict(self, n_days=7):
+        """ Predict Susceptible, Infected and Recovered
+
+        Args:
+            n_days (int): number of days to predict
+
+        Returns:
+            np.array: Array with:
+                - T: days of the predictions, where T[0] represents the last
+                  day of the sample and T[1] onwards the predictions.
+                - S: Predicted number of susceptible
+                - I: Predicted number of infected
+                - R: Predicted number of removed
+                - X: Predicted number of quarantined
+        """
+        return self.solve(n_days, n_days + 1).fetch()
 
     def set_parameters(
         self,
@@ -104,7 +121,7 @@ class SIRX(Model):
 
                 - n_S0: Total number of susceptible to the infection
                 - n_I0: Total number of infected
-                - n_R0: Total number of recovered
+                - n_R0: Total number of removed
                 - n_X0: Total number of quarantined
 
                 Note: n_S0 + n_I0 + n_R0 + n_X0 = Population
@@ -143,7 +160,7 @@ class SIRX(Model):
 
                 - n_S0: Total number of susceptible to the infection
                 - n_I0: Total number of infected
-                - n_R0: Total number of recovered
+                - n_R0: Total number of removed
                 - n_X0: Total number of quarantined
 
                 Note: n_S0 + n_I0 + n_R0 + n_X0 = Population
