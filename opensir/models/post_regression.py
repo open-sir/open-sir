@@ -7,10 +7,14 @@ from sklearn.utils import resample
 @dataclass
 class PredictionResults:
     """Class which stores model predictions,
-    lists of parameters and fun stuff """
+    based on block cross-validation """
 
-    mse_avg: float  # MSE_avg after cross validation
-    mse_list: list  # List of sequential mse
+    pred: list  # List of out of sample predictions
+    n_obs_end: float  # Last in-sample observation
+    mse_avg: list  # MSE_avg after cross validation
+    n_avg: list  # Sample size of each MSE_avg
+    mse_seq: list  # List of lists of sequential MSE
+    mse_fc: list  # List of lists of forecasting for n-days MSE
     p_cv: list  # List of parameters rolling-fitted through cross validation
     # p_bt: list  # List of parameters sampled through bootstrap
 
@@ -48,6 +52,22 @@ def _percentile_to_ci(alpha, p_bt):
 
     # Construct confidence intervals
     return [np.percentile(p_bt, p_low), np.percentile(p_bt, p_up)]
+
+
+def rolling_avg(x_list):
+    """Calculates average mean squared errors
+    over block cross validation error lists"""
+    err_sum = np.zeros(len(x_list))
+    err_list = [[] for i in range(len(x_list))]
+    n_elem = []
+    for i in x_list:
+        err_list.append([])
+        for j, k in enumerate(i):
+            err_sum[j] += k
+            err_list[j].append(k)
+        n_elem.append(len(i))
+    avg_err = err_sum / np.linspace(len(x_list), 1, len(x_list))
+    return avg_err, n_elem, err_list
 
 
 class ConfidenceIntervalsMixin:
@@ -163,14 +183,10 @@ class ConfidenceIntervalsMixin:
                     the model produces the best and worst fit to the data.
 
         """
-
-        p0 = self.p
-        w0 = self.w0
-
         # Consider at least the three first datapoints
         p_list = []
-        mse_list = []  # List of mean squared errors of the prediction for the time t+1
-        for i in range(min_sample, len(self.fit_attr["n_obs"]) - lags + 1):
+        mse_fc = []  # List of MSE of the prediction for the time t + i lags
+        for i in range(min_sample, len(self.fit_attr["n_obs"]) + 1):
             # Fit model to a subset of the time-series data
             self.fit(
                 self.fit_attr["t_obs"][0:i],
@@ -181,21 +197,41 @@ class ConfidenceIntervalsMixin:
             p_list.append(self.p)
             # Predict for the i + lags period
             self.solve(
-                self.fit_attr["t_obs"][i - 1 + lags],
-                numpoints=int(self.fit_attr["t_obs"][i - 1 + lags]) + 1,
+                self.fit_attr["t_obs"][-1],
+                numpoints=int(self.fit_attr["t_obs"][-1]) + 1,
             )
             pred = self.fetch()[:, self.fit_attr["fit_input"]]
             # Calculate mean squared errors
-            mse = np.sqrt((pred[-1] - self.fit_attr["n_obs"][i - 1 + lags]) ** 2)
-            mse_list.append(mse)
+            if i < len(self.fit_attr["t_obs"]):
+                idx = self.fit_attr["t_obs"][i - 1 + lags :].astype(int)
+                mse = np.sqrt((pred[idx] - self.fit_attr["n_obs"][i - 1 + lags :]) ** 2)
+                mse_fc.append(mse)
 
         p_list = np.array(p_list)
-        mse_list = np.array(mse_list)
-        mse_avg = np.mean(mse_list)
+        mse_fc = np.array(mse_fc)
+        mse_avg, n_avg, mse_seq = rolling_avg(mse_fc)
 
-        self.p = p0
-        self.w = w0
+        # Generate len(t_obs) - min_sample days predictions
+        self.solve(
+            self.fit_attr["t_obs"][-1] + len(mse_fc),
+            numpoints=int(self.fit_attr["t_obs"][-1]) + len(mse_fc) + 1,
+        )
 
-        sol = PredictionResults(mse_avg, mse_list, p_list)
+        # The first element of the prediction is out of the sample
+        t_start = int(self.fit_attr["t_obs"][-1]) + 1
 
-        return mse_avg, mse_list, p_list, sol
+        # pred = self.fetch()[t_start:, self.fit_attr["fit_input"]]
+        # n_obs_end = self.fetch()[t_start - 1, self.fit_attr["fit_input"]]
+
+        # create PredictionResults dataclass
+        pred_data = PredictionResults(
+            pred=self.fetch()[t_start:, self.fit_attr["fit_input"]],
+            n_obs_end=self.fetch()[t_start - 1, self.fit_attr["fit_input"]],
+            mse_avg=mse_avg,
+            n_avg=n_avg,
+            mse_seq=mse_seq,
+            mse_fc=mse_fc,
+            p_cv=p_list,
+        )
+
+        return mse_avg, mse_seq, p_list, pred_data
