@@ -7,8 +7,10 @@ from sklearn.utils import resample
 
 @dataclass
 class PredictionResults:
-    """Class which stores model predictions,
-    based on block cross-validation """
+    """
+    Class which stores model predictions,
+    based on block cross-validation
+    """
 
     pred: list  # List of out of sample predictions
     n_obs_end: float  # Last in-sample observation
@@ -20,9 +22,11 @@ class PredictionResults:
     # p_bt: list  # List of parameters sampled through bootstrap
 
     def print_mse(self):
-        """Prints a summary of model predictive
+        """
+        Prints a summary of model predictive
         performance measures for n_days forecasting
-        of the fitted variable """
+        of the fitted variable
+        """
 
         for i, j, k in zip(self.mse_avg, self.n_avg, range(1 + self.n_avg[0])):
             print(
@@ -31,8 +35,10 @@ class PredictionResults:
             )
 
     def plot_predictions(self, n_days=1):
-        """Plot predictions and confidence intervals
-        for the fitted variable"""
+        """
+        Plot predictions and confidence intervals
+        for the fitted variable
+        """
 
         t = np.linspace(1, 1 + n_days, n_days)
         pred_low_2s = self.pred - 2 * self.mse_avg
@@ -104,9 +110,12 @@ def _sort_resample(t_obs, n_obs):
 
 
 def _percentile_to_ci(alpha, p_bt):
-    """Input alpha and list of bootstrapped values
+    """
+    Input alpha and list of bootstrapped values
     for one parameter
-    Output: confidence intervals of the parameters """
+    Output: confidence intervals of the parameters
+    """
+
     p_low = ((1 - alpha) / 2) * 100
     p_up = (alpha + (1 - alpha) / 2) * 100
     # From the resulting distribution, extract the
@@ -281,9 +290,6 @@ class ConfidenceIntervalsMixin:
 
         # The first element of the prediction is out of the sample
         t_start = int(self.fit_attr["t_obs"][-1]) + 1
-
-        # pred = self.fetch()[t_start:, self.fit_attr["fit_input"]]
-        # n_obs_end = self.fetch()[t_start - 1, self.fit_attr["fit_input"]]
 
         # create PredictionResults dataclass
         pred_data = PredictionResults(
