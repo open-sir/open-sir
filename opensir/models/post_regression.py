@@ -1,6 +1,7 @@
 """Post regression utilities"""
 from dataclasses import dataclass
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.utils import resample
 
 
@@ -17,6 +18,67 @@ class PredictionResults:
     mse_fc: list  # List of lists of forecasting for n-days MSE
     p_cv: list  # List of parameters rolling-fitted through cross validation
     # p_bt: list  # List of parameters sampled through bootstrap
+
+    def print_mse(self):
+        """Prints a summary of model predictive
+        performance measures for n_days forecasting
+        of the fitted variable """
+
+        for i, j, k in zip(self.mse_avg, self.n_avg, range(1 + self.n_avg[0])):
+            print(
+                "Average MSE for %.0i-day predictions = %.2f, MSE sample size = %.0i"
+                % (k, i, j)
+            )
+
+    def plot_predictions(self, n_days=1):
+        """Plot predictions and confidence intervals
+        for the fitted variable"""
+
+        t = np.linspace(1, 1 + n_days, n_days)
+        pred_low_2s = self.pred - 2 * self.mse_avg
+        pred_low_s = self.pred - self.mse_avg
+        pred_high_s = self.pred + self.mse_avg
+        pred_high_2s = self.pred + 2 * self.mse_avg
+        plt.figure(figsize=[6, 6])
+        ax = plt.axes()
+        ax.tick_params(axis="both", which="major", labelsize=14)
+
+        plt.plot(t, pred_low_2s[:n_days], "b-.", linewidth=2)
+        plt.plot(t, pred_low_s[:n_days], "b--", linewidth=2)
+        plt.plot(t, self.pred[:n_days], "k-", linewidth=3)
+        plt.plot(t, pred_high_s[:n_days], "r--", linewidth=2)
+        plt.plot(t, pred_high_2s[:n_days], "r-.", linewidth=2)
+
+        # Fancy filling
+        plt.fill_between(
+            t, pred_low_s[:n_days], self.pred[:n_days], alpha=0.3, color="b"
+        )
+        plt.fill_between(
+            t, pred_low_2s[:n_days], self.pred[:n_days], alpha=0.15, color="b"
+        )
+        plt.fill_between(
+            t, pred_high_s[:n_days], self.pred[:n_days], alpha=0.3, color="r"
+        )
+        plt.fill_between(
+            t, pred_high_2s[:n_days], self.pred[:n_days], alpha=0.15, color="r"
+        )
+
+        plt.legend(
+            [
+                "-2$\sigma$ 95% IC",  # pylint: disable=W1401
+                "-$\sigma$ 66% IC",  # pylint: disable=W1401
+                "Prediction",
+                "+$\sigma$ 66% IC",  # pylint: disable=W1401
+                "+2$\sigma$ 95% IC",  # pylint: disable=W1401
+            ],
+            fontsize=12,
+        )
+        plt.plot([0, 1], [self.n_obs_end, self.pred[0]], "k-")
+
+        plt.title("Model predictions", size=15)
+        plt.xlabel("Days since the end of the sample", size=14)
+        plt.ylabel("Number of infected", size=14)
+        plt.show()
 
 
 def _sort_resample(t_obs, n_obs):
