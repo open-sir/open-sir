@@ -86,10 +86,12 @@ class ConfidenceIntervalsMixin:
 
         # Perform bootstraping
         for i in range(0, n_iter):  # pylint: disable=W0612
-            t_rs, n_i_rs = _sort_resample(self.postreg["t_obs"], self.postreg["n_obs"])
+            t_rs, n_i_rs = _sort_resample(
+                self.fit_attr["t_obs"], self.fit_attr["n_obs"]
+            )
             w0_rs = [self.pop - n_i_rs[0], n_i_rs[0], 0]  # Still assume r0=0
             self.set_params(self.p, w0_rs)
-            self.fit(t_rs, n_i_rs, self.fit_index)
+            self.fit(t_rs, n_i_rs, self.fit_attr["fit_index"])
             p_bt.append(self.p)
             if r0_ci:
                 r0_bt.append(self.r0)
@@ -155,21 +157,23 @@ class ConfidenceIntervalsMixin:
         # Consider at least the three first datapoints
         p_list = []
         mse_list = []  # List of mean squared errors of the prediction for the time t+1
-        for i in range(min_sample, len(self.postreg["n_obs"]) - lags + 1):
+        for i in range(min_sample, len(self.fit_attr["n_obs"]) - lags + 1):
             # Fit model to a subset of the time-series data
             self.fit(
-                self.postreg["t_obs"][0:i], self.postreg["n_obs"][0:i], self.fit_index
+                self.fit_attr["t_obs"][0:i],
+                self.fit_attr["n_obs"][0:i],
+                self.fit_attr["fit_index"],
             )
             # Store the rolling parameters
             p_list.append(self.p)
             # Predict for the i + lags period
             self.solve(
-                self.postreg["t_obs"][i - 1 + lags],
-                numpoints=int(self.postreg["t_obs"][i - 1 + lags]) + 1,
+                self.fit_attr["t_obs"][i - 1 + lags],
+                numpoints=int(self.fit_attr["t_obs"][i - 1 + lags]) + 1,
             )
-            pred = self.fetch()[:, self.fit_input]
+            pred = self.fetch()[:, self.fit_attr["fit_input"]]
             # Calculate mean squared errors
-            mse = np.sqrt((pred[-1] - self.postreg["n_obs"][i - 1 + lags]) ** 2)
+            mse = np.sqrt((pred[-1] - self.fit_attr["n_obs"][i - 1 + lags]) ** 2)
             mse_list.append(mse)
 
         p_list = np.array(p_list)

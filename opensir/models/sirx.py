@@ -79,7 +79,9 @@ class SIRX(Model):
         Returns:
             SIRX: Reference to self
         """
-        self.fit_input = 4  # By default, fit against containment compartment X
+        # By default, fit against containment compartment X
+        self.fit_input = 4
+
         if array:
             arr = np.array(array, dtype=float)
         else:
@@ -127,7 +129,8 @@ class SIRX(Model):
             SIRX: Reference to self
         """
         super().set_params(p, initial_conds)
-        self.fit_input = 4  # By default, fit against containment compartment X
+        # By default, fit against containment compartment X
+        self.fit_input = 4
         return self
 
     def set_initial_conds(self, array=None, n_S0=None, n_I0=None, n_R0=None, n_X0=None):
