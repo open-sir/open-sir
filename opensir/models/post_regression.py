@@ -1,6 +1,18 @@
 """Post regression utilities"""
+from dataclasses import dataclass
 import numpy as np
 from sklearn.utils import resample
+
+
+@dataclass
+class PredictionResults:
+    """Class which stores model predictions,
+    lists of parameters and fun stuff """
+
+    mse_avg: float  # MSE_avg after cross validation
+    mse_list: list  # List of sequential mse
+    p_cv: list  # List of parameters rolling-fitted through cross validation
+    # p_bt: list  # List of parameters sampled through bootstrap
 
 
 def _sort_resample(t_obs, n_obs):
@@ -112,15 +124,16 @@ class ConfidenceIntervalsMixin:
 
         return ci, p_bt
 
-    def ci_block_cv(self, lags=1, min_sample=3):
-        """ Calculates the confidence interval of the model parameters
-        using a block cross validation appropriate for time series
-        and differential systems when the value of the states in the
-        time (t+1) is not independent from the value of the states in the
-        time t.
+    def block_cv(self, lags=1, min_sample=3):
+        """ Calculates mean squared error of the predictions as a
+        measure of model predictive performance using block
+        cross validation.
 
-        The model needs to be initialized with the parameters and
-        initial conditions
+        The cross-validation mean squared error can be used to
+        estimate a confidence interval of model predictions.
+
+        The model needs to be initialized and fitted
+        prior calling block_cv.
 
         Args:
             lags (int): Defines the number of days that will be
@@ -183,4 +196,6 @@ class ConfidenceIntervalsMixin:
         self.p = p0
         self.w = w0
 
-        return mse_avg, mse_list, p_list
+        sol = PredictionResults(mse_avg, mse_list, p_list)
+
+        return mse_avg, mse_list, p_list, sol
