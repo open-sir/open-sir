@@ -40,6 +40,21 @@ class SIR(Model):
     IC = ["n_S0", "n_I0", "n_R0"]
     NAME = "SIR"
 
+    def predict(self, n_days=7):
+        """ Predict Susceptible, Infected and Recovered
+
+        Args:
+            n_days (int): number of days to predict
+
+        Returns:
+            np.array: Array with:
+                - T: current day
+                - S: Predicted number of susceptible
+                - I: Predicted number of infected
+                - R: Predicted number of recovered
+        """
+        return self.solve(n_days, n_days + 1).fetch()
+
     def set_params(self, p, initial_conds):
         """ Set model parameters.
 
