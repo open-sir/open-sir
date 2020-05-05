@@ -1,5 +1,6 @@
 """Contains class and ODE system of SIR model"""
 import numpy as np
+import matplotlib.pyplot as plt
 from .model import Model, _validate_params
 
 SIR_NUM_PARAMS = 2
@@ -143,6 +144,35 @@ class SIR(Model):
         self.pop = np.sum(arr)
         self.w0 = arr / self.pop
         return self
+
+    def plot(self):
+        if self.sol is None:
+            raise self.InitializationError(
+                "Model must be either solved or fitted before plotting"
+            )
+
+        t = self.fetch()[:, 0]
+        n_i = self.fetch()[:, 2]
+        n_r = self.fetch()[:, 3]
+        fig, ax1 = plt.subplots(figsize=[5, 5])
+
+        color = "tab:red"
+        ax1.set_xlabel("Time / days", size=14)
+        ax1.set_ylabel("Number of infected", size=14)
+        ax1.plot(t, n_i, color=color)
+        ax1.tick_params(axis="y", labelcolor=color)
+        ax1.tick_params(axis="both", labelsize=13)
+
+        ax2 = ax1.twinx()  # instantiate a second axis that shares the x coordinate
+
+        color = "tab:blue"
+        ax2.set_ylabel("Number of removed", size=14)
+        ax2.plot(t, n_r, color=color, linestyle=":", linewidth=4)
+        ax2.tick_params(axis="y", labelcolor=color)
+        ax2.tick_params(axis="both", labelsize=13)
+
+        plt.title("SIR model predictions", size=16)
+        plt.show()
 
     @property
     def _model(self):

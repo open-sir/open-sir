@@ -1,6 +1,7 @@
 """Contains class and ODE system of SIR-X model"""
-from .model import Model, _validate_params
+import matplotlib.pyplot as plt
 import numpy as np
+from .model import Model, _validate_params
 
 SIRX_NUM_PARAMS = 5
 SIRX_NUM_IC = 4
@@ -171,6 +172,36 @@ class SIRX(Model):
         self.pop = np.sum(arr)
         self.w0 = arr / self.pop
         return self
+
+    def plot(self):
+        if self.sol is None:
+            raise self.InitializationError(
+                "Model must be either solved or fitted before plotting"
+            )
+
+        t = self.fetch()[:, 0]
+        n_i = self.fetch()[:, 2]
+        n_x = self.fetch()[:, 4]
+
+        fig, ax1 = plt.subplots(figsize=[5, 5])
+
+        color = "tab:red"
+        ax1.set_xlabel("Time / days", size=14)
+        ax1.set_ylabel("Number of infected $N_I$", size=14)
+        ax1.plot(t, n_i, color=color)
+        ax1.tick_params(axis="y", labelcolor=color)
+        ax1.tick_params(axis="both", labelsize=13)
+
+        ax2 = ax1.twinx()  # instantiate a second axis that shares the x coordinate
+
+        color = "tab:blue"
+        ax2.set_ylabel("Number of quarantined $N_X$", size=14)
+        ax2.plot(t, n_x, color=color, linestyle=":", linewidth=4)
+        ax2.tick_params(axis="y", labelcolor=color)
+        ax2.tick_params(axis="both", labelsize=13)
+
+        plt.title("SIR-X model predictions", size=16)
+        plt.show()
 
     def _update_ic(self):
         """Updates i_0 = (i_0/x_0)*x_0 in the context
