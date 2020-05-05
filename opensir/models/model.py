@@ -54,6 +54,10 @@ class Model(ConfidenceIntervalsMixin):
         of fit_index has a length different than the length
         of the parameter array self.p"""
 
+    class InitializationError(Exception):
+        """Raised when a function executed violating the
+        logical sequence of the Open-SIR pipeline"""
+
     @property
     def _model(self):
         raise Exception()
