@@ -14,7 +14,7 @@ def sir(w, t, p):
     where
         S: Fraction of the population susceptible to the infection
         I: Fraction on the population infected
-        R: Fraction of the population recovered
+        R: Fraction of the population removed
     t: Current time
     p: vector of parameter
 
@@ -51,7 +51,7 @@ class SIR(Model):
                 - T: current day
                 - S: Predicted number of susceptible
                 - I: Predicted number of infected
-                - R: Predicted number of recovered
+                - R: Predicted number of removed
         """
         return self.solve(n_days, n_days + 1).fetch()
 
@@ -66,7 +66,7 @@ class SIR(Model):
 
                 - n_S0: Total number of susceptible to the infection
                 - n_I0: Toral number of infected
-                - n_R0: Total number of recovered
+                - n_R0: Total number of removed
 
                 Note n_S0 + n_I0 + n_R0 = Population
 
@@ -131,7 +131,7 @@ class SIR(Model):
 
                 - n_S0: Total number of susceptible to the infection
                 - n_I0: Total number of infected
-                - n_R0: Total number of recovered
+                - n_R0: Total number of removed
 
                 Note: n_S0 + n_I0 + n_R0 = Population
 
