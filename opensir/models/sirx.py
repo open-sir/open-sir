@@ -62,7 +62,8 @@ class SIRX(Model):
 
         Returns:
             np.array: Array with:
-                - T: current day
+                - T: days of the predictions, where T[0] represents the last
+                  day of the sample and T[1] onwards the predictions.
                 - S: Predicted number of susceptible
                 - I: Predicted number of infected
                 - R: Predicted number of removed
