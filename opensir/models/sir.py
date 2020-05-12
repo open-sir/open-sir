@@ -41,7 +41,7 @@ class SIR(Model):
     NAME = "SIR"
 
     def predict(self, n_days=7):
-        """ Predict Susceptible, Infected and Recovered
+        """ Predict Susceptible, Infected and Removed
 
         Args:
             n_days (int): number of days to predict
