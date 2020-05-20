@@ -159,8 +159,9 @@ class SIR(Model):
         color = "tab:red"
         ax1.set_xlabel("Time / days", size=14)
         ax1.set_ylabel("Number of infected", size=14)
-        ax1.plot(t, n_i, color=color)
+        ax1.plot(t, n_i, color=color, linewidth=4)
         ax1.tick_params(axis="y", labelcolor=color)
+        ax1.yaxis.label.set_color(color)
         ax1.tick_params(axis="both", labelsize=13)
 
         ax2 = ax1.twinx()  # instantiate a second axis that shares the x coordinate
@@ -169,7 +170,10 @@ class SIR(Model):
         ax2.set_ylabel("Number of removed", size=14)
         ax2.plot(t, n_r, color=color, linestyle=":", linewidth=4)
         ax2.tick_params(axis="y", labelcolor=color)
+        ax2.yaxis.label.set_color(color)
         ax2.tick_params(axis="both", labelsize=13)
+
+        plt.xlim(t[0], t[-1])
 
         plt.title("SIR model predictions", size=16)
         plt.show()
