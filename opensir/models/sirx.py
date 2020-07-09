@@ -56,7 +56,9 @@ class SIRX(Model):
     NAME = "SIRX"
 
     def predict(self, n_days=7):
-        """ Predict Susceptible, Infected and Recovered
+        """ Predicts Susceptible, Infected, Removed and Quarantined
+        in the next n_days from the last day of the sample used to
+        train the model.
 
         Args:
             n_days (int): number of days to predict
@@ -70,7 +72,7 @@ class SIRX(Model):
                 - R: Predicted number of removed
                 - X: Predicted number of quarantined
         """
-        return self.solve(n_days, n_days + 1).fetch()
+        return self._predict(n_days)
 
     def set_parameters(
         self,
