@@ -153,6 +153,35 @@ class Model(ConfidenceIntervalsMixin):
         self.sol = sol
         return self
 
+    def _predict(self, n_days=7):
+        """ Out of sample prediction using children
+        class model
+
+        Args:
+            n_days (int): number of days to predict
+
+        Returns:
+            np.array: Array with:
+                - T: days of the predictions, where T[0] represents the last
+                  day of the sample and T[1] onwards the predictions.
+                - S: Predicted number of susceptible
+                - I: Predicted number of infected
+                - R: Predicted number of removed
+        """
+
+        # Add number of days to predict to the number of days
+        # of the sample on which the model was trained
+        last_day = int(self.fit_attr["t_obs"][-1])
+        total_days = n_days + last_day
+        # Calculate the solution since the first day of the
+        # train data
+        full_sol = self.solve(total_days, total_days + 1).fetch()
+        # Extract the array with the predictions since the last day
+        pred_sol = full_sol[last_day:, :]
+        # Set t = 0 as the last day of the sample
+        pred_sol[:, 0] = pred_sol[:, 0] - last_day
+        return pred_sol
+
     @property
     def r0(self):
         """ Returns reproduction number

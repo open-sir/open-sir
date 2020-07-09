@@ -55,7 +55,7 @@ class SIR(Model):
                 - I: Predicted number of infected
                 - R: Predicted number of removed
         """
-        return self.solve(n_days, n_days + 1).fetch()
+        return self._predict(n_days)
 
     def set_params(self, p, initial_conds):
         """ Set model parameters.
