@@ -1,6 +1,7 @@
 """Contains class and ODE system of SIR model"""
 import numpy as np
 import matplotlib.pyplot as plt
+import copy
 from .model import Model, _validate_params
 
 SIR_NUM_PARAMS = 2
@@ -41,11 +42,25 @@ class SIR(Model):
     IC = ["n_S0", "n_I0", "n_R0"]
     NAME = "SIR"
 
-    def predict(self, n_days=7):
+    def predict(self, n_days=7, n_I=None, n_R=None):
         """ Predict Susceptible, Infected and Removed
 
         Args:
             n_days (int): number of days to predict
+
+            n_I (int): number of infected at the last
+            day of available data. If no number of
+            infected is provided, the value is taken
+            from the last element of the number of
+            infected array on which the model was
+            fitted.
+
+            n_R (int): number of removed at the last
+            day of available data. If no number of
+            removed is provided, the value is set as
+            the number of removed calculated by the
+            SIR model as a consequence of the parameter
+            fitting.
 
         Returns:
             np.array: Array with:
@@ -55,7 +70,29 @@ class SIR(Model):
                 - I: Predicted number of infected
                 - R: Predicted number of removed
         """
-        return self._predict(n_days)
+
+        # Get initial values for the predictive
+        # model initial conditions
+        pred_ic = self.w0 * self.pop
+
+        if n_I is None:
+            # Obtain number of infected from the last known
+            # data point in the sample data
+            pred_ic[1] = self.fit_attr["n_obs"][-1]
+        else:
+            pred_ic[1] = n_I
+
+        if n_R is None:
+            # Estimate number of recovered from the predictions
+            pred_ic[2] = self.fetch()[int(self.fit_attr["t_obs"][-1]), 3]
+
+        # Calculate new number of susceptible
+        pred_ic[0] = self.pop - sum(pred_ic[1:])
+        # Create a shallow copy of the model
+        pred_model = copy.copy(self)
+        pred_model.set_params(pred_model.p, pred_ic)
+
+        return pred_model._predict(n_days)
 
     def set_params(self, p, initial_conds):
         """ Set model parameters.
