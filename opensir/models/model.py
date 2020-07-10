@@ -169,18 +169,7 @@ class Model(ConfidenceIntervalsMixin):
                 - R: Predicted number of removed
         """
 
-        # Add number of days to predict to the number of days
-        # of the sample on which the model was trained
-        last_day = int(self.fit_attr["t_obs"][-1])
-        total_days = n_days + last_day
-        # Calculate the solution since the first day of the
-        # train data
-        full_sol = self.solve(total_days, total_days + 1).fetch()
-        # Extract the array with the predictions since the last day
-        pred_sol = full_sol[last_day:, :]
-        # Set t = 0 as the last day of the sample
-        pred_sol[:, 0] = pred_sol[:, 0] - last_day
-        return pred_sol
+        return self.solve(n_days, n_days + 1).fetch()
 
     @property
     def r0(self):
