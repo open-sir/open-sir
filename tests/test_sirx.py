@@ -4,8 +4,8 @@
 # pylint: disable=R0201
 # pylint: disable=C0121
 "Test exponential convergence"
-import numpy as np
 import copy
+import numpy as np
 import pytest
 
 from opensir.models import SIRX

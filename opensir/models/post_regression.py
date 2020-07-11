@@ -99,11 +99,11 @@ class PredictionResults:
 
         plt.legend(
             [
-                "-2$\sigma$ 95% IC",  # pylint: disable=W1401
-                "-$\sigma$ 66% IC",  # pylint: disable=W1401
+                "-2$\\sigma$ 95% IC",  # pylint: disable=W1401
+                "-$\\sigma$ 66% IC",  # pylint: disable=W1401
                 "Prediction",
-                "+$\sigma$ 66% IC",  # pylint: disable=W1401
-                "+2$\sigma$ 95% IC",  # pylint: disable=W1401
+                "+$\\sigma$ 66% IC",  # pylint: disable=W1401
+                "+2$\\sigma$ 95% IC",  # pylint: disable=W1401
             ],
             fontsize=12,
         )
