@@ -34,39 +34,67 @@ class PredictionResults:
                 % (k, i, j)
             )
 
-    def plot_predictions(self, n_days=1):
+    def plot_pred_ci(self, n_days=1):
         """
         Plot predictions and confidence intervals
-        for the fitted variable
+        for the fitted variable. n_days should
+        be smaller than the length of the mean
+        squared errors array calculated using
+        cross validation. For long term predictions,
+        use the model.predict() function and deploy
+        a separate plot.
+
+        Args:
+            n_days(int): number of days to
+            predict
         """
 
-        t = np.linspace(1, 1 + n_days, n_days)
-        pred_low_2s = self.pred - 2 * self.mse_avg
-        pred_low_s = self.pred - self.mse_avg
-        pred_high_s = self.pred + self.mse_avg
-        pred_high_2s = self.pred + 2 * self.mse_avg
+        # Only show confidence intervals
+        # for the range where cross-validation
+        # results are available
+        if n_days > self.pred.shape[0]:
+            raise ValueError(
+                """n_days must be smaller than %d, which is the array
+                of mean squared errors calculated
+                using block cross validation"""
+                % self.pred.shape[0]
+            )
+
+        t = np.linspace(0, n_days + 1, n_days + 1)
+        pred_low_2s = self.pred[1:] - 2 * self.mse_avg
+        pred_low_s = self.pred[1:] - self.mse_avg
+        pred_high_s = self.pred[1:] + self.mse_avg
+        pred_high_2s = self.pred[1:] + 2 * self.mse_avg
         plt.figure(figsize=[6, 6])
         ax = plt.axes()
         ax.tick_params(axis="both", which="major", labelsize=14)
 
-        plt.plot(t, pred_low_2s[:n_days], "b-.", linewidth=2)
-        plt.plot(t, pred_low_s[:n_days], "b--", linewidth=2)
-        plt.plot(t, self.pred[:n_days], "k-", linewidth=3)
-        plt.plot(t, pred_high_s[:n_days], "r--", linewidth=2)
-        plt.plot(t, pred_high_2s[:n_days], "r-.", linewidth=2)
+        plt.plot(t[1:], pred_low_2s[:n_days], "b-.", linewidth=2)
+        plt.plot(t[1:], pred_low_s[:n_days], "b--", linewidth=2)
+        plt.plot(t, self.pred[: n_days + 1], "k-", linewidth=3)
+        plt.plot(t[1:], pred_high_s[:n_days], "r--", linewidth=2)
+        plt.plot(t[1:], pred_high_2s[:n_days], "r-.", linewidth=2)
 
         # Fancy filling
         plt.fill_between(
-            t, pred_low_s[:n_days], self.pred[:n_days], alpha=0.3, color="b"
+            t[1:], pred_low_s[:n_days], self.pred[1 : n_days + 1], alpha=0.3, color="b"
         )
         plt.fill_between(
-            t, pred_low_2s[:n_days], self.pred[:n_days], alpha=0.15, color="b"
+            t[1:],
+            pred_low_2s[:n_days],
+            self.pred[1 : n_days + 1],
+            alpha=0.15,
+            color="b",
         )
         plt.fill_between(
-            t, pred_high_s[:n_days], self.pred[:n_days], alpha=0.3, color="r"
+            t[1:], pred_high_s[:n_days], self.pred[1 : n_days + 1], alpha=0.3, color="r"
         )
         plt.fill_between(
-            t, pred_high_2s[:n_days], self.pred[:n_days], alpha=0.15, color="r"
+            t[1:],
+            pred_high_2s[:n_days],
+            self.pred[1 : n_days + 1],
+            alpha=0.15,
+            color="r",
         )
 
         plt.legend(
@@ -79,7 +107,7 @@ class PredictionResults:
             ],
             fontsize=12,
         )
-        plt.plot([0, 1], [self.n_obs_end, self.pred[0]], "k-")
+        # plt.plot([0, 1], [self.n_obs_end, self.pred[0]], "k-")
 
         plt.title("Model predictions", size=15)
         plt.xlabel("Days since the end of the sample", size=14)
@@ -293,7 +321,7 @@ class ConfidenceIntervalsMixin:
 
         # create PredictionResults dataclass
         pred_data = PredictionResults(
-            pred=self.fetch()[t_start:, self.fit_attr["fit_input"]],
+            pred=self.predict(len(mse_fc))[:, self.fit_attr["fit_input"]],
             n_obs_end=self.fetch()[t_start - 1, self.fit_attr["fit_input"]],
             mse_avg=mse_avg,
             n_avg=n_avg,
