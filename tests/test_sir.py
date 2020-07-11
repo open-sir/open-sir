@@ -5,6 +5,7 @@
 # pylint: disable=C0121
 "Test exponential convergence"
 import numpy as np
+import copy
 import pytest
 
 from opensir.models import Model, SIR
@@ -62,9 +63,15 @@ class TestUnittestSir:
         model.set_params(DEFAULT_PARAMS, EALING_IC)
         model.solve(t, t + 1)
         m_list = model.fetch()
+        # Fit the model to simulated data
+        model.fit(m_list[:, 0], m_list[:, 2])
 
-        new_model = SIR()
-        new_model.set_params(DEFAULT_PARAMS, EALING_IC)
+        # Create a copy of the model
+        new_model = copy.copy(model)
+        # Displace the last day as the initial day in fit_attr to check
+        # that predicting since t = 0 reproduces model.solve(n_days)
+        new_model.fit_attr["t_obs"] = [model.fit_attr["t_obs"][0]]
+        new_model.fit_attr["n_obs"] = [model.fit_attr["n_obs"][0]]
         new_list = new_model.predict(t)
 
         assert np.array_equal(new_list, m_list)
