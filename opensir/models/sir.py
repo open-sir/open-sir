@@ -92,7 +92,7 @@ class SIR(Model):
         pred_model = copy.copy(self)
         pred_model.set_params(pred_model.p, pred_ic)
 
-        return pred_model._predict(n_days)
+        return pred_model.solve(n_days, n_days + 1).fetch()
 
     def set_params(self, p, initial_conds):
         """ Set model parameters.

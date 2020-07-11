@@ -1,6 +1,7 @@
 """Contains class and ODE system of SIR-X model"""
 import matplotlib.pyplot as plt
 import numpy as np
+import copy
 from .model import Model, _validate_params
 
 SIRX_NUM_PARAMS = 5
@@ -55,13 +56,27 @@ class SIRX(Model):
     IC = ["n_S0", "n_I0", "n_R0", "n_X0"]
     NAME = "SIRX"
 
-    def predict(self, n_days=7):
+    def predict(self, n_days=7, n_X=None, n_R=None):
         """ Predicts Susceptible, Infected, Removed and Quarantined
         in the next n_days from the last day of the sample used to
         train the model.
 
         Args:
             n_days (int): number of days to predict
+
+            n_X (int): number of confirmed cases at the last
+            day of available data. If no number of
+            confirmed cases is provided, the value is taken
+            from the last element of the number of
+            confirmed cases array on which the model was
+            fitted.
+
+            n_R (int): number of removed at the last
+            day of available data. If no number of
+            removed is provided, the value is set as
+            the number of removed calculated by the
+            SIR-X model as a consequence of the parameter
+            fitting.
 
         Returns:
             np.array: Array with:
@@ -72,7 +87,33 @@ class SIRX(Model):
                 - R: Predicted number of removed
                 - X: Predicted number of quarantined
         """
-        return self._predict(n_days)
+
+        # Get initial values for the predictive
+        # model initial conditions
+        pred_ic = self.w0 * self.pop
+
+        if n_X is None:
+            # Obtain number of quarantined from the last known
+            # data point in the sample data
+            pred_ic[3] = self.fit_attr["n_obs"][-1]
+        else:
+            pred_ic[3] = n_X
+
+        if n_R is None:
+            # Estimate number of recovered from the predictions
+            pred_ic[2] = self.fetch()[int(self.fit_attr["t_obs"][-1]), 3]
+
+        # Estimate number of infected based on the fitted ratio of infected
+        # over tested. p[-1] = inf_over_test
+        pred_ic[1] = pred_ic[3] * self.p[-1]
+        # Calculate new number of susceptible
+        # nS = population - (nI+nR+nX)
+        pred_ic[0] = self.pop - sum(pred_ic[1:])
+        # Create a shallow copy of the model
+        pred_model = copy.copy(self)
+        pred_model.set_params(pred_model.p, pred_ic)
+
+        return pred_model.solve(n_days, n_days + 1).fetch()
 
     def set_parameters(
         self,
