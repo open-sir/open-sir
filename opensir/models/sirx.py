@@ -102,10 +102,13 @@ class SIRX(Model):
         if n_R is None:
             # Estimate number of recovered from the predictions
             pred_ic[2] = self.fetch()[int(self.fit_attr["t_obs"][-1]), 3]
+        else:
+            pred_ic[2] = n_R
 
-        # Estimate number of infected based on the fitted ratio of infected
+        # Estimate number of infected
+        pred_ic[1] = self.fetch()[int(self.fit_attr["t_obs"][-1]), 2]
         # over tested. p[-1] = inf_over_test
-        pred_ic[1] = pred_ic[3] * self.p[-1]
+        # pred_ic[1] = pred_ic[3] * self.p[-1]
         # Calculate new number of susceptible
         # nS = population - (nI+nR+nX)
         pred_ic[0] = self.pop - sum(pred_ic[1:])
