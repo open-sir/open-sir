@@ -307,7 +307,7 @@ class ConfidenceIntervalsMixin:
                 mse_fc.append(mse)
 
         p_list = np.array(p_list)
-        mse_fc = np.array(mse_fc)
+        mse_fc = np.array(mse_fc, dtype=object)
         mse_avg, n_avg, mse_seq = rolling_avg(mse_fc)
 
         # Generate len(t_obs) - min_sample days predictions
