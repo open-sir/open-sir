@@ -71,11 +71,11 @@ class PredictionResults:
 
         plt.legend(
             [
-                "-2$\sigma$ 95% IC",  # pylint: disable=W1401
-                "-$\sigma$ 66% IC",  # pylint: disable=W1401
+                "-2$\\sigma$ 95% IC",  # pylint: disable=W1401
+                "-$\\sigma$ 66% IC",  # pylint: disable=W1401
                 "Prediction",
-                "+$\sigma$ 66% IC",  # pylint: disable=W1401
-                "+2$\sigma$ 95% IC",  # pylint: disable=W1401
+                "+$\\sigma$ 66% IC",  # pylint: disable=W1401
+                "+2$\\sigma$ 95% IC",  # pylint: disable=W1401
             ],
             fontsize=12,
         )
@@ -197,18 +197,6 @@ class ConfidenceIntervalsMixin:
         """
 
         self.is_initialized()
-
-        # If no options provided, use default confidence interval of 95%
-        if options is None:
-            options = {"alpha": 0.95, "n_iter": 1000, "r0_ci": True}
-        else:
-            opt_keys = ["alpha", "n_iter", "r0_ci"]
-            for key in opt_keys:
-                if key not in options:
-                    raise self.InvalidParameterError(
-                        "options dictionary doesn't include all keys"
-                    )
-
         p0 = self.p
 
         p_bt = []
@@ -251,7 +239,7 @@ class ConfidenceIntervalsMixin:
         time (t+1) is not independent from the value of the states in the
         time t.
 
-        The model needs to be initialized and fitted prior 
+        The model needs to be initialized and fitted prior
         calling block_cv.
 
         The cross-validation mean squared error can be used to

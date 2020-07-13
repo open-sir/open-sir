@@ -124,13 +124,13 @@ class TestModel:
         are from an model instance that doesn't have initialized
         it parameters or initial conditions"""
 
-        population = 1e6
-        t_obs = np.array([0, 1, 2, 3])
-        n_obs = np.array([2, 4, 7, 10])
-        model.is_fitted = True
+        # model.is_fitted = True
         # Fail if the model is somehow fitted but not initialized
         with pytest.raises(Model.InitializationError):
-            model.ci_bootstrap(t_obs, n_obs, population, options=None)
+            model.ci_bootstrap()
+
+        with pytest.raises(Model.InitializationError):
+            model.block_cv()
 
     def test_postregression_without_regression(self, model):
         """ Set of tests that verify that the model attributes are setted
@@ -140,34 +140,13 @@ class TestModel:
         model.IC = ["n_S0", "n_I0", "n_R0"]
 
         population = 1e6
-        t_obs = np.array([0, 1, 2, 3])
         n_obs = np.array([2, 4, 7, 10])
         p = [1, 2]
         w0 = [population, population - n_obs[0], 0]
         model.set_params(p, w0)
         # Fail if the model has not been fitted
         with pytest.raises(Model.InitializationError):
-            model.ci_bootstrap(t_obs, n_obs, population, options=None)
+            model.ci_bootstrap()
 
-    def test_postregression_invalid_options_dict(self, model):
-        """ Tests that an error is raised if an invalid options
-        dict is passed to postregression """
-        # model.PARAMS = ["alpha", "beta"]
-        # model.IC = ["n_S0", "n_I0", "n_R0"]
-
-        # population = 1e6
-        # t_obs = np.array([0, 1, 2, 3])
-        # n_obs = np.array([2, 4, 7, 10])
-        # p = [1, 2]
-        # w0 = [population, population - n_obs[0], 0]
-        # model.set_params(p, w0)
-        # model.is_fitted = True
-        # bootstrap_options = {'alpha': 0.95, 'n_iter': 100, 'r_ci': True}
-        # blockcv_options = {'lags': 6}
-        # Fail if the model has not been fitted
-        # ! Update this to the verbose parameteric input
-        # with pytest.raises(Model.InvalidParameterError):
-        #     model.ci_bootstrap(t_obs, n_obs, population, bootstrap_options)
-
-        # with pytest.raises(Model.InvalidParameterError):
-        #     model.ci_block_cv(t_obs, n_obs, population, blockcv_options)
+        with pytest.raises(Model.InitializationError):
+            model.block_cv()
