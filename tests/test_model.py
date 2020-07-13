@@ -116,3 +116,37 @@ class TestModel:
         # Check that passing a list of n_obs raises an error
         with pytest.raises(Model.InvalidParameterError):
             model.fit(t_obs, n_list, pop)
+
+    ## Post-regression
+    # ci_bootstrap
+    def test_ci_without_model_init(self, model):
+        """ Tests that an error is raised if the ci routines
+        are from an model instance that doesn't have initialized
+        it parameters or initial conditions"""
+
+        # model.is_fitted = True
+        # Fail if the model is somehow fitted but not initialized
+        with pytest.raises(Model.InitializationError):
+            model.ci_bootstrap()
+
+        with pytest.raises(Model.InitializationError):
+            model.block_cv()
+
+    def test_postregression_without_regression(self, model):
+        """ Set of tests that verify that the model attributes are setted
+        or fitted before calling postregression routines"""
+
+        model.PARAMS = ["alpha", "beta"]
+        model.IC = ["n_S0", "n_I0", "n_R0"]
+
+        population = 1e6
+        n_obs = np.array([2, 4, 7, 10])
+        p = [1, 2]
+        w0 = [population, population - n_obs[0], 0]
+        model.set_params(p, w0)
+        # Fail if the model has not been fitted
+        with pytest.raises(Model.InitializationError):
+            model.ci_bootstrap()
+
+        with pytest.raises(Model.InitializationError):
+            model.block_cv()

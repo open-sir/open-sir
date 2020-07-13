@@ -41,6 +41,7 @@ class Model(ConfidenceIntervalsMixin):
         self.w0 = None
         self.fit_input = None
         self.fit_attr = None  # Dict set after the first call of fit
+        self.is_fitted = False  # True after calling model.fit() function successfully
 
     class InvalidParameterError(Exception):
         """Raised when an initial parameter of a value is not correct"""
@@ -257,6 +258,7 @@ class Model(ConfidenceIntervalsMixin):
         )
         self.p[self.fit_attr["fit_index"]] = par_opt
         self.fit_attr["pcov"] = pcov  # This also flags that the model was fitted
+        self.is_fitted = True
         return self
 
     def _update_ic(self):
